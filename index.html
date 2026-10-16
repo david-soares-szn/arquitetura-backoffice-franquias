@@ -1,0 +1,3721 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Arquitetura Administrativo e Financeiro</title>
+<!--
+=====================================================================
+  TEMPLATE · ARQUITETURA DE PROCESSOS DE UM SETOR DO BACKOFFICE
+  Padrão replicado de "Qualidade (Vic)" e "Fornecedores (Henry)".
+  Preencher as áreas marcadas com chaves duplas e os arrays TRAILS / LANES
+  / AUTOS no final do arquivo. Nada mais precisa mudar.
+  Autor do modelo: Rayanne Oliveira · BackOffice Franquias
+=====================================================================
+-->
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&display=swap" rel="stylesheet">
+<style>
+/* padrão institucional Seazone: hero navy, colunas por macroprocesso, popover em hover/click */
+*,*::before,*::after{box-sizing:border-box}
+:root{
+ color-scheme:light;
+ --bg:oklch(96.5% .012 260);--paper:oklch(99.4% .003 250);
+ --ink:oklch(24% .02 255);--ink2:oklch(42% .018 255);--ink3:oklch(58% .014 255);
+ --line:oklch(89% .01 255);--soft:oklch(95% .012 260);
+ --blue:oklch(48% .21 258);--bluebg:oklch(95% .03 258);
+ --teal:oklch(47% .1 200);--tealbg:oklch(95.5% .03 200);
+ --red:oklch(52% .17 27);--redbg:oklch(95.5% .03 27);
+ --amber:oklch(55% .12 70);--amberbg:oklch(95.5% .04 80);
+ --green:oklch(50% .11 155);--greenbg:oklch(95.5% .035 155);
+ --violet:oklch(48% .16 300);--violetbg:oklch(95.5% .03 300);
+ --navy:oklch(19% .05 260);--navybg:oklch(93% .02 260);--coral:oklch(70% .17 32);
+ --hero-fg:oklch(94% .01 260);--hero-muted:oklch(72% .02 260);--hero-line:oklch(35% .04 260);
+ --sans:"Bricolage Grotesque",system-ui,sans-serif;--serif:Literata,Georgia,serif;--mono:ui-monospace,"Cascadia Mono",Consolas,monospace;
+}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:400 14px/1.5 var(--sans)}
+.code{font-family:var(--mono);font-size:11.5px;font-variant-numeric:tabular-nums}
+
+.hero{background:var(--navy);color:var(--hero-fg);padding-block:24px 36px;padding-inline:24px}
+.hero-inner{max-width:1500px;margin:0 auto}
+.masthead{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:12px;border-bottom:1px solid var(--hero-line);margin-bottom:24px;padding-bottom:12px}
+.wordmark{font:700 14px/1 var(--sans);letter-spacing:.14em;color:var(--paper);display:flex;align-items:center;gap:12px;text-transform:uppercase;flex-wrap:wrap}
+.wordmark span:not(.sz-logo):not(.sz-house){color:var(--hero-muted);font-weight:500;letter-spacing:.12em}
+.sz-logo{display:inline-flex;align-items:center;gap:2px;font:700 30px/1 var(--sans);letter-spacing:-.04em;text-transform:none;color:currentColor}
+.sz-house{display:inline-block;width:.82em;height:.84em;flex-shrink:0;margin-inline:1px;vertical-align:-.04em}
+.sz-house svg{width:100%;height:100%;display:block}
+.mast-date{font:500 13px/1 var(--sans);color:var(--hero-muted);letter-spacing:.06em;text-transform:uppercase}
+.eyebrow{font:700 12px/1.3 var(--sans);letter-spacing:.08em;text-transform:uppercase;color:var(--coral);display:block}
+h1{font:700 clamp(28px,4vw,44px)/1.06 var(--sans);letter-spacing:-.01em;margin:10px 0 14px;color:var(--paper);text-wrap:balance;max-width:24ch}
+.lede{font:400 17px/1.55 var(--serif);max-width:70ch;color:var(--hero-fg);margin:0}
+.sub{font:700 13px/1.3 var(--sans);letter-spacing:.06em;text-transform:uppercase;color:var(--coral);margin:16px 0 0}
+
+.wrap{max-width:1500px;margin:0 auto;padding-block:24px 56px;padding-inline:24px;display:flex;flex-direction:column;gap:18px}
+.panel{background:var(--paper);border-radius:10px;padding:12px 16px;box-shadow:0 2px 12px oklch(20% .05 260 / .06),0 1px 3px oklch(20% .05 260 / .04)}
+.summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px 28px;font-size:13px;color:var(--ink2)}
+.summary .g{display:flex;flex-direction:column;gap:6px;min-width:0}
+.summary .gl{font:700 11px/1 var(--sans);letter-spacing:.09em;text-transform:uppercase;color:var(--ink3)}
+.summary .gv{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center}
+.summary b{font-variant-numeric:tabular-nums;color:var(--ink);font-size:15px}
+.hint{font-size:12.5px;color:var(--ink3);margin:0}
+
+.tabs{display:flex;gap:2px;border-bottom:2px solid var(--line);padding-inline:4px;margin-top:4px}
+.tab{background:transparent;border:0;padding:10px 18px;font:700 13px/1 var(--sans);letter-spacing:.04em;text-transform:uppercase;color:var(--ink3);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;border-radius:0}
+.tab[aria-selected="true"]{color:var(--navy);border-bottom-color:var(--coral)}
+.tab:hover:not([aria-selected="true"]){color:var(--ink2)}
+.tab:focus-visible{outline:2px solid var(--coral);outline-offset:2px;border-radius:4px}
+.tabpanel{display:flex;flex-direction:column;gap:18px}
+.tabpanel[hidden]{display:none}
+
+.scroll{overflow-x:auto;padding-bottom:8px}
+.flow{min-width:1440px;display:flex;flex-direction:column;gap:18px}
+.trail{display:flex;flex-direction:column;gap:10px;border-radius:12px;padding:14px;background:oklch(98% .008 260);border:1px solid var(--line)}
+.trail-h{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.trail-h .tn{font:700 16px/1.2 var(--sans);color:var(--c)}
+.trail-h .tk{font:700 11px/1 var(--sans);letter-spacing:.09em;text-transform:uppercase;color:var(--paper);background:var(--c);padding:4px 7px;border-radius:4px}
+.trail-h .to{font:400 13px/1.4 var(--serif);color:var(--ink2)}
+.main{display:grid;align-items:start}
+.col{display:flex;flex-direction:column;align-items:stretch}
+.fin{--c:var(--blue);--cs:var(--bluebg)} .fin2{--c:var(--teal);--cs:var(--tealbg)} .ges{--c:var(--navy);--cs:var(--navybg)} .sup{--c:var(--ink2);--cs:var(--soft)}
+.head{background:var(--c);color:var(--paper);border-radius:10px;padding:10px 12px;display:flex;flex-direction:column;gap:4px;text-align:left;border:0;font:inherit;cursor:pointer}
+.head .v{font:700 11px/1 var(--sans);letter-spacing:.09em;text-transform:uppercase;opacity:.8}
+.head .n{font:700 15px/1.2 var(--sans)}
+.head .o{font:400 12px/1.4 var(--serif);opacity:.92}
+.head .e{font-size:11.5px;line-height:1.35;background:oklch(100% 0 0 / .14);border-radius:6px;padding:5px 7px;margin-top:2px}
+.join{height:44px;display:flex;align-items:center;justify-content:center;color:var(--ink3);font:700 18px/1 var(--sans)}
+.join svg{width:100%;height:14px;overflow:visible}
+.join line{stroke:var(--ink3);stroke-width:1.6}
+.join path{fill:var(--ink3)}
+.down{height:16px;display:flex;justify-content:center}
+.down svg{width:10px;height:16px}
+.down line{stroke:var(--c);stroke-width:1.6}
+.down path{fill:var(--c)}
+
+.box{background:var(--paper);border:1.5px solid var(--c);border-radius:8px;padding:8px 10px;display:flex;flex-direction:column;gap:5px;text-align:left;font:inherit;color:inherit;cursor:pointer;width:100%}
+.box:hover,.box:focus-visible,.box[aria-expanded="true"],.head:focus-visible,.chip:hover,.chip:focus-visible,.chip[aria-expanded="true"]{outline:2px solid var(--coral);outline-offset:2px}
+.box .t{font-weight:700;line-height:1.3;display:flex;gap:6px;align-items:baseline}
+.box .t .code{color:var(--c);flex:0 0 auto}
+.box .o{font:400 12px/1.4 var(--serif);color:var(--ink2)}
+.tags{display:flex;flex-wrap:wrap;gap:4px}
+
+.mode,.ia,.ex,.imp,.chk{font:700 10px/1 var(--sans);letter-spacing:.05em;text-transform:uppercase;padding:4px 6px;border-radius:4px;white-space:nowrap}
+.mode.auto{color:var(--green);background:var(--greenbg)}
+.mode.misto{color:var(--amber);background:var(--amberbg)}
+.mode.manual{color:var(--red);background:var(--redbg)}
+.ia{color:var(--violet);background:var(--paper);border:1px solid var(--violet)}
+.ia.i0{color:var(--ink3);border-color:var(--line)}
+.ia.i2{color:var(--paper);background:var(--violet)}
+.ex{color:var(--ink2);background:var(--soft)}
+.imp{color:var(--coral);background:var(--paper);border:1px dashed var(--coral)}
+.chk{color:var(--amber);background:var(--paper);border:1px solid var(--amber)}
+
+.value{background:var(--navy);color:var(--hero-fg);border-radius:10px;padding:12px;font-size:12.5px;display:flex;flex-direction:column;gap:6px;text-align:center}
+.value b{font:700 13px/1.2 var(--sans);color:var(--coral)}
+.value span{color:var(--hero-fg)}
+.value .meta{font-weight:700;color:var(--paper);background:oklch(100% 0 0 / .12);border-radius:6px;padding:4px}
+
+.base{display:grid;grid-template-columns:3fr 1fr;gap:14px}
+.lane{border-radius:12px;background:var(--cs);padding:12px;display:flex;flex-direction:column;gap:10px}
+.lane .lab{font:700 11px/1 var(--sans);letter-spacing:.09em;text-transform:uppercase;color:var(--c)}
+.lane .row{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+.lane .grp{display:flex;flex-direction:column;gap:6px;min-width:0}
+.lane .gh{font-weight:700;font-size:13px}
+.lane .gh .code{color:var(--c);margin-right:6px}
+.lane .go{font:400 12px/1.4 var(--serif);color:var(--ink2)}
+.chips{display:flex;flex-direction:column;gap:6px}
+.chip{background:var(--paper);border:1.5px solid var(--c);border-radius:6px;padding:5px 8px;font:inherit;font-size:12.5px;text-align:left;cursor:pointer;color:inherit;display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.chip .code{color:var(--c)}
+.chip .nm{flex:1 1 120px;min-width:0}
+.new{font:700 10px/1 var(--sans);letter-spacing:.05em;text-transform:uppercase;color:var(--paper);background:var(--coral);padding:3px 5px;border-radius:4px}
+.upnote{font-size:12.5px;color:var(--ink3);text-align:center;margin:0}
+.legend{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:12.5px;color:var(--ink2);align-items:center}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+
+#pop{position:fixed;z-index:20;width:min(380px,calc(100vw - 32px));max-height:min(70vh,560px);overflow:auto;background:var(--paper);border:1.5px solid var(--navy);border-radius:10px;box-shadow:0 12px 32px oklch(20% .05 260 / .22);padding:14px 16px;display:flex;flex-direction:column;gap:10px}
+#pop[hidden]{display:none}
+#pop .ph{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+#pop h3{margin:0;font:700 16px/1.25 var(--sans);text-wrap:balance}
+#pop h3 .code{color:var(--blue);margin-right:6px}
+#pop .x{border:0;background:var(--soft);border-radius:6px;font:700 14px/1 var(--sans);padding:6px 8px;cursor:pointer;color:var(--ink2)}
+#pop .sec{display:flex;flex-direction:column;gap:3px}
+#pop .sl{font:700 10.5px/1 var(--sans);letter-spacing:.09em;text-transform:uppercase;color:var(--ink3)}
+#pop p{margin:0;font:400 13px/1.5 var(--serif)}
+#pop ul{margin:0;padding-left:18px;font:400 13px/1.5 var(--serif)}
+#pop .aud{background:var(--amberbg);border-radius:6px;padding:7px 9px}
+#pop .aud .sl{color:var(--amber)}
+#pop .opp{background:var(--bluebg);border-radius:6px;padding:7px 9px}
+#pop .opp .sl{color:var(--blue)}
+#pop .impb{background:oklch(96% .03 32);border-radius:6px;padding:7px 9px}
+#pop .impb .sl{color:var(--coral)}
+#pop .chkb{border:1px dashed var(--amber);border-radius:6px;padding:7px 9px}
+#pop .chkb .sl{color:var(--amber)}
+#pop .tools{display:flex;flex-wrap:wrap;gap:4px}
+.tool{font-size:11px;line-height:1.2;padding:3px 8px;border-radius:999px;background:var(--soft);border:1px solid var(--line);color:var(--ink2);text-decoration:none}
+a.tool{color:var(--blue);border-color:var(--blue);background:var(--paper)}
+a.tool:hover,a.tool:focus-visible{background:var(--bluebg);outline:none}
+
+.instfoot{margin-top:32px;padding-top:20px;border-top:2px solid var(--ink);display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:16px}
+.instfoot .wm{font:700 14px/1.4 var(--sans);letter-spacing:.14em;color:var(--blue);text-transform:uppercase}
+.instfoot .wm .sz-logo{color:var(--navy);font-size:22px}
+.instfoot .wm>span:not(.sz-logo){display:block;color:var(--ink2);font-weight:500;letter-spacing:.08em;font-size:12px;margin-top:4px}
+.instfoot .who{font-size:13px;color:var(--ink3);text-align:right;line-height:1.6}
+.instfoot .who b{color:var(--ink);font-weight:700;font-size:14px;display:block}
+.autos{display:flex;flex-direction:column;gap:12px}
+.autos-h{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.autos-h .tn{font:700 16px/1.2 var(--sans);color:var(--violet)}
+.autos-h .to{font:400 13px/1.4 var(--serif);color:var(--ink2)}
+.agrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px}
+.agrp{display:flex;flex-direction:column;gap:8px;min-width:0}
+.agrp .lab{font:700 11px/1 var(--sans);letter-spacing:.09em;text-transform:uppercase;color:var(--violet)}
+.acard{background:var(--paper);border:1.5px solid var(--violet);border-radius:8px;padding:8px 10px;display:flex;flex-direction:column;gap:5px}
+.acard .t{font-weight:700;line-height:1.3;display:flex;gap:6px;align-items:baseline;flex-wrap:wrap}
+.acard .t .code{color:var(--violet)}
+.acard .o{font:400 12px/1.4 var(--serif);color:var(--ink2)}
+.acard .f{font-size:11.5px;color:var(--ink3)}
+.st{font:700 10px/1 var(--sans);letter-spacing:.05em;text-transform:uppercase;padding:4px 6px;border-radius:4px;white-space:nowrap}
+.st.ar{color:var(--green);background:var(--greenbg)} .st.val{color:var(--amber);background:var(--amberbg)} .st.des{color:var(--ink2);background:var(--soft)} .st.dem{color:var(--blue);background:var(--bluebg)}
+.steps{display:flex;flex-wrap:wrap;gap:4px;align-items:center;font-size:11.5px;color:var(--ink3)}
+.stepb{font:700 11px/1 var(--mono);color:var(--blue);background:var(--paper);border:1px solid var(--blue);border-radius:4px;padding:3px 5px;cursor:pointer}
+.stepb:hover,.stepb:focus-visible,.stepb[aria-expanded="true"]{outline:2px solid var(--coral);outline-offset:1px}
+@media (max-width:640px){.wrap,.hero{padding-inline:16px} .instfoot .who{text-align:left} .base{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:no-preference){#pop{animation:pin .12s ease-out}}
+@keyframes pin{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+
+<!-- =====================================================================
+     1. HERO (cabeçalho navy)
+     - wordmark Seazone + nome do setor (ex.: "Franquias · Qualidade")
+     - data e versão (ex.: "Rascunho v1 · 14/10/2026")
+     - eyebrow fixa: "Arquitetura de processos"
+     - h1 com o nome do setor
+     - lede (parágrafo serifa) com a missão do setor em uma frase
+     - sub (coral) com a tagline curta ("3-5 palavras que grudem")
+===================================================================== -->
+<section class="hero">
+ <div class="hero-inner">
+  <div class="masthead">
+   <div class="wordmark"><span class="sz-logo" role="img" aria-label="Seazone">sea<span class="sz-house"><svg viewBox="0 0 564 575" xmlns="http://www.w3.org/2000/svg" fill="none" aria-hidden="true"><path d="M543.226 178.172L442.93 119.392C443.194 117.952 443.72 116.643 443.72 115.203V26.5752C443.72 11.913 431.743 0 417.001 0H363.562C348.821 0 336.843 11.913 336.843 26.5752V57.6015L300.516 36.3936C285.774 27.6225 266.294 29.0626 252.605 39.1428C252.342 39.2737 252.079 39.2737 251.947 39.4046L20.951 172.543C1.73419 183.932 -6.29474 210.507 5.55122 230.406C17.9237 251.09 45.301 256.588 64.5178 245.199L78.3381 237.213C62.017 269.025 51.7505 305.026 51.7505 344.169C51.7505 406.221 75.7056 467.226 119.799 511.344C137.173 528.624 157.443 543.156 179.555 553.759C196.666 562.007 214.567 568.814 233.257 572.218C258.002 576.669 283.8 574.444 308.808 574.444C335.922 574.444 363.036 574.444 390.018 574.444C414.5 574.444 439.113 574.575 463.99 574.575C470.176 574.575 476.231 573.004 481.759 570.254C488.866 566.72 492.947 562.792 497.685 556.509C502.95 549.57 506.635 541.061 506.635 532.159V252.923C525.062 259.599 547.306 253.839 558.363 235.511C570.34 215.613 562.311 189.038 542.963 177.648L543.226 178.172ZM427.794 348.751C427.794 433.582 370.012 502.573 282.878 502.573C195.745 502.573 131.777 429.131 131.777 344.3C131.777 259.468 195.745 188.776 282.878 188.776C370.012 188.776 427.794 254.232 427.794 338.147V348.751Z" fill="#EB615E"/></svg></span>zone</span><span>· Franquias · Administrativo e Financeiro</span></div>
+   <span class="mast-date">Rascunho v1 · 16/10/2026</span>
+  </div>
+  <span class="eyebrow">Arquitetura de processos</span>
+  <h1>Administrativo e Financeiro</h1>
+  <p class="lede">Garante que o dano do hóspede seja cobrado e o proprietário reembolsado, que cada imóvel tenha o custo certo e cada franquia o repasse certo, e que a rede só cresça onde a franquia opera bem.</p>
+  <p class="sub">Dano cobrado, custo certo, rede saudável.</p>
+ </div>
+</section>
+
+<div class="wrap">
+  <!-- =====================================================================
+       2. SUMMARY (panel de contagens)
+       - Preenchido pelo JS a partir dos arrays TRAILS/LANES.
+       - Mostra: total de processos, modo (auto/misto/manual), uso de IA (0/1/2),
+                 quem executa, interface com a Implantação, pontos a validar.
+       - NÃO EDITAR o conteúdo, só os arrays no final.
+  ===================================================================== -->
+  <div class="panel summary" id="summary"></div>
+
+  <!-- =====================================================================
+       NAV DE ABAS
+       - Aba 1: Arquitetura (trilhas + lanes de Gestão e Suporte)
+       - Aba 2: Agentes, extensões e rotinas
+  ===================================================================== -->
+  <nav class="tabs" role="tablist" aria-label="Seções do documento">
+    <button class="tab" role="tab" type="button" data-tab="arq" aria-selected="true" aria-controls="t-arq">Arquitetura</button>
+    <button class="tab" role="tab" type="button" data-tab="aut" aria-selected="false" aria-controls="t-aut">Agentes, extensões e rotinas</button>
+  </nav>
+
+  <!-- =====================================================================
+       ABA 1 · ARQUITETURA
+       - Instrução + Trilhas (flow) + Lanes de Gestão e Suporte (base)
+  ===================================================================== -->
+  <section class="tabpanel" id="t-arq" role="tabpanel" aria-labelledby="tab-arq">
+    <p class="hint">Passe o mouse ou clique em qualquer processo para ver objetivo, entrega, como funciona, auditoria, interface com a Implantação e ferramentas. Clique no cabeçalho de cada coluna para ver o valor que ela entrega.</p>
+
+    <!-- 3. FLOW: as trilhas de macroprocessos
+         - Cada trilha é uma linha horizontal com N colunas (uma por MPx).
+         - A última coluna é um "value box" navy com a cadeia de valor.
+         - 1 trilha mínima; 2 só se o setor tem fluxos realmente independentes. -->
+    <div class="scroll">
+      <div class="flow" id="flow" style="min-width:2530px">
+        <p class="upnote">▲ As faixas abaixo sustentam as trilhas ▲</p>
+        <!-- 4. BASE: Lanes de Gestão e Suporte (preenchidas via JS a partir de LANES) -->
+        <div class="base" id="base"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =====================================================================
+       ABA 2 · AGENTES, EXTENSÕES E ROTINAS
+       - O que roda sozinho ou é rodado pelo time em cada etapa.
+       - Cada card: id (Ax/Ex/Sx/Rx), nome, status, frequência, objetivo e etapas atendidas.
+  ===================================================================== -->
+  <section class="tabpanel" id="t-aut" role="tabpanel" aria-labelledby="tab-aut" hidden>
+    <section class="panel autos">
+      <div class="autos-h"><span class="tn">Agentes, extensões e rotinas</span><span class="to">O que roda sozinho ou é rodado pelo time em cada etapa. Clique no número da etapa para ver o processo correspondente na aba Arquitetura.</span></div>
+      <div class="agrid" id="autos"></div>
+    </section>
+  </section>
+
+  <!-- =====================================================================
+       6. LEGENDAS (5 linhas fixas - não mexer)
+       - Modo de execução · Uso de IA · Quem executa · Implantação · Trilhas
+  ===================================================================== -->
+  <div class="legend">
+    <span><span class="mode auto">Automático</span> roda sozinho</span>
+    <span><span class="mode misto">Misto</span> roda sozinho e passa por auditoria antes de valer</span>
+    <span><span class="mode manual">Manual</span> feito pelo time ou pelo fornecedor</span>
+  </div>
+  <div class="legend">
+    <span><span class="ia i0">Sem IA</span> regra fixa ou trabalho humano</span>
+    <span><span class="ia i1">IA assiste</span> a IA sugere ou analisa, a pessoa decide</span>
+    <span><span class="ia i2">IA executa</span> a IA decide ou gera sozinha</span>
+  </div>
+  <div class="legend">
+    <span><span class="ex">Sistema</span> automação com regra fixa</span>
+    <span><span class="ex">Agente</span> agente de IA</span>
+    <span><span class="ex">Pessoa</span> coordenador, analista ou fornecedor</span>
+  </div>
+  <div class="legend">
+    <span><span class="imp">← Implantação</span> recebemos algo da Implantação</span>
+    <span><span class="imp">→ Implantação</span> entregamos algo para a Implantação</span>
+    <span><span class="chk">Validar</span> ponto deduzido, falta confirmar</span>
+  </div>
+  <div class="legend">
+    <!-- Ajustar as cores conforme suas trilhas (fin = azul, fin2 = teal, ges = navy, sup = cinza) -->
+    <span><i style="background:var(--blue)"></i>Trilha 1: Danos de hóspede</span>
+    <span><i style="background:var(--teal)"></i>Trilha 2: Administrativo e Financeiro (inclui Score, Stop e UTI)</span>
+    <span><i style="background:var(--navy)"></i>Gestão: regras, medição e demandas</span>
+    <span><i style="background:var(--ink2)"></i>Suporte: ferramentas</span>
+  </div>
+
+  <!-- =====================================================================
+       7. FOOTER INSTITUCIONAL
+       - Wordmark seazone + nome do setor
+       - Nome, email e classificação ("Documento interno · data")
+  ===================================================================== -->
+  <footer class="instfoot">
+    <div class="wm"><span class="sz-logo" role="img" aria-label="Seazone">sea<span class="sz-house"><svg viewBox="0 0 564 575" xmlns="http://www.w3.org/2000/svg" fill="none" aria-hidden="true"><path d="M543.226 178.172L442.93 119.392C443.194 117.952 443.72 116.643 443.72 115.203V26.5752C443.72 11.913 431.743 0 417.001 0H363.562C348.821 0 336.843 11.913 336.843 26.5752V57.6015L300.516 36.3936C285.774 27.6225 266.294 29.0626 252.605 39.1428C252.342 39.2737 252.079 39.2737 251.947 39.4046L20.951 172.543C1.73419 183.932 -6.29474 210.507 5.55122 230.406C17.9237 251.09 45.301 256.588 64.5178 245.199L78.3381 237.213C62.017 269.025 51.7505 305.026 51.7505 344.169C51.7505 406.221 75.7056 467.226 119.799 511.344C137.173 528.624 157.443 543.156 179.555 553.759C196.666 562.007 214.567 568.814 233.257 572.218C258.002 576.669 283.8 574.444 308.808 574.444C335.922 574.444 363.036 574.444 390.018 574.444C414.5 574.444 439.113 574.575 463.99 574.575C470.176 574.575 476.231 573.004 481.759 570.254C488.866 566.72 492.947 562.792 497.685 556.509C502.95 549.57 506.635 541.061 506.635 532.159V252.923C525.062 259.599 547.306 253.839 558.363 235.511C570.34 215.613 562.311 189.038 542.963 177.648L543.226 178.172ZM427.794 348.751C427.794 433.582 370.012 502.573 282.878 502.573C195.745 502.573 131.777 429.131 131.777 344.3C131.777 259.468 195.745 188.776 282.878 188.776C370.012 188.776 427.794 254.232 427.794 338.147V348.751Z" fill="#EB615E"/></svg></span>zone</span><span>Franquias · Administrativo e Financeiro</span></div>
+    <div class="who"><b>David Barbosa Soares</b>david.soares@seazone.com.br<br>Documento interno · 16/10/2026</div>
+  </footer>
+</div>
+
+<!-- Popover (não editar) -->
+<div id="pop" role="dialog" aria-modal="false" hidden></div>
+
+<script>
+/* Gerado por scripts/gerar_arquitetura_setor.py a partir das arquiteturas de Danos (Fabi, 08/10) e do Backoffice (Isa, 14/10). */
+const T = {
+ "dn_sapron": {
+  "n": "Sapron · Danos de Hóspede",
+  "u": "https://sapron.com.br/danosdehospede"
+ },
+ "dn_host": {
+  "n": "Seazone Host"
+ },
+ "dn_newbyte": {
+  "n": "Newbyte",
+  "u": "https://chat.newbyte.net.br/app/accounts/121/dashboard"
+ },
+ "dn_airbnb": {
+  "n": "Airbnb · Central de Resoluções"
+ },
+ "dn_stays": {
+  "n": "Stays"
+ },
+ "dn_gmail": {
+  "n": "Gmail (anfitrião Seazone)"
+ },
+ "dn_paypal": {
+  "n": "PayPal"
+ },
+ "dn_fin": {
+  "n": "#suporte-financeiro"
+ },
+ "dn_slack": {
+  "n": "Slack"
+ },
+ "dn_ext": {
+  "n": "#cobranças-extrajudiciais-danos"
+ },
+ "dn_seajuri": {
+  "n": "Formulário do Jurídico",
+  "u": "https://juridico.seazone.dev/seajuri"
+ },
+ "dn_now": {
+  "n": "Portal NOW Seguros",
+  "u": "https://www.nowseguros.seg.br/sinistro/short-stay"
+ },
+ "dn_n0800": {
+  "n": "Central 0800 NOW Seguros"
+ },
+ "dn_seguro": {
+  "n": "seguro@seazone.com.br"
+ },
+ "dn_drive": {
+  "n": "Google Drive"
+ },
+ "dn_crawford": {
+  "n": "Crawford (reguladora)"
+ },
+ "dn_rca": {
+  "n": "Formulário RC Airbnb",
+  "u": "https://www.airbnb.com.br/insurance/create-claim/liability-insurance"
+ },
+ "dn_rcb": {
+  "n": "RC Parceiros Booking",
+  "u": "https://admin.booking.com/partner-liability-insurance/policy.html"
+ },
+ "dn_pipefy": {
+  "n": "Pipefy"
+ },
+ "dn_blip": {
+  "n": "Blip"
+ },
+ "dn_crise": {
+  "n": "#alertas-crise-franquias"
+ },
+ "dn_metabase": {
+  "n": "Metabase"
+ },
+ "cv_sol": {
+  "n": "Canvas · Solicitação de Danos",
+  "u": "https://seazone-fund.slack.com/docs/TDLTVAWQ6/F09F5BVH12L"
+ },
+ "cv_val": {
+  "n": "Canvas · Validação de Danos",
+  "u": "https://seazone-fund.slack.com/docs/TDLTVAWQ6/F09EKT0TKC2"
+ },
+ "cv_cob": {
+  "n": "Canvas · Cobrança de Danos",
+  "u": "https://seazone-fund.slack.com/docs/TDLTVAWQ6/F09F0D0QGVC"
+ },
+ "cv_easy": {
+  "n": "Canvas · EasyCover - Danos",
+  "u": "https://seazone-fund.slack.com/docs/TDLTVAWQ6/F09FEPJBGAF"
+ },
+ "cv_ext": {
+  "n": "Canvas · Cobrança Extra Judicial - Danos",
+  "u": "https://seazone-fund.slack.com/docs/TDLTVAWQ6/F09HC6PJTFA"
+ },
+ "cv_a24": {
+  "n": "Canvas · Acionamento da Assistência 24h",
+  "u": "https://seazone-fund.slack.com/docs/TDLTVAWQ6/F0B9BBFLW1G"
+ },
+ "cv_rcb": {
+  "n": "Canvas · RC para anfitriões Booking",
+  "u": "https://seazone-fund.slack.com/docs/TDLTVAWQ6/F086495ETE0"
+ },
+ "cv_rca": {
+  "n": "Canvas · RC para anfitriões Airbnb",
+  "u": "https://seazone-fund.slack.com/docs/TDLTVAWQ6/F08KXV85G4C"
+ },
+ "cv_crise": {
+  "n": "Canvas · Detecção de Crise no New Byte",
+  "u": "https://seazone-fund.slack.com/docs/TDLTVAWQ6/F0BJSSMK3D4"
+ },
+ "cv_matriz": {
+  "n": "Canvas · Matriz de Objeção e Rotina de Contato",
+  "u": "https://seazone-fund.slack.com/docs/TDLTVAWQ6/F09FR6DS9P1"
+ },
+ "cv_plano": {
+  "n": "Canvas · Plano de ação: cobrança direto nas OTAs (backlog)",
+  "u": "https://seazone-fund.slack.com/docs/TDLTVAWQ6/F085HJ57R8F"
+ },
+ "cv_limp": {
+  "n": "Canvas · Padronização Limpeza Extra - OTAs",
+  "u": "https://seazone-fund.slack.com/docs/TDLTVAWQ6/F085V9EME8N"
+ },
+ "cv_churn": {
+  "n": "Canvas · CS Churn - Pendências Financeiras e Distrato",
+  "u": "https://seazone-fund.slack.com/docs/TDLTVAWQ6/F085WRXABD1"
+ },
+ "ops_scorepulse": {
+  "n": "ScorePulse",
+  "u": "https://scorepulse.seazone.com.br"
+ },
+ "ops_planilha": {
+  "n": "Planilha Avaliações – Score Franquias 2025 (aba Score novo)"
+ },
+ "ops_bdscore": {
+  "n": "Planilha BD Score 4.0 (aba BD Meses)"
+ },
+ "ops_indicadores": {
+  "n": "Planilha Indicadores Score (Qualidade)"
+ },
+ "ops_nekt": {
+  "n": "Nekt (fontes Google Sheets e tabelas silver/gold)"
+ },
+ "ops_sapron": {
+  "n": "Sapron"
+ },
+ "ops_stays": {
+  "n": "Stays (avaliações)"
+ },
+ "ops_appstop": {
+  "n": "App de Stop de Crescimento",
+  "u": "https://stopdecrescimento.seazone.properties"
+ },
+ "ops_actions": {
+  "n": "GitHub Actions (rodada diária às 9h)"
+ },
+ "ops_slack": {
+  "n": "Slack · #avisos-operação"
+ },
+ "ops_suporte": {
+  "n": "Suporte Unificado (chamados e aba Avisos)",
+  "u": "https://suporte-unificado.seazone.dev"
+ },
+ "ops_host": {
+  "n": "Seazone Host"
+ },
+ "ops_bot": {
+  "n": "Bot sem receber imóveis (repo bot-sem-receber-imoveis)"
+ },
+ "ops_kpi": {
+  "n": "kpi-system (setor Backoffice – OPS)",
+  "u": "https://kpi-system.seazone.dev"
+ },
+ "ops_skillkpi": {
+  "n": "Skill kpis-franquias (Claude Code)"
+ },
+ "ops_claude": {
+  "n": "Claude Code + MCPs (Sapron, Nekt, ScorePulse, Suporte)"
+ },
+ "ops_processo": {
+  "n": "Processo de Stop de Crescimento v2 (docs/PROCESSO.md)"
+ },
+ "ops_geo": {
+  "n": "GeoCluster do Sapron (polígonos)",
+  "u": "https://sapron.com.br/geo"
+ },
+ "ops_github": {
+  "n": "GitHub seazone-tech (stop-crescimento, bot)"
+ },
+ "uti_central": {
+  "n": "Central da UTI (Kanbans, fichas, Regras e fontes)",
+  "u": "https://central-uti-stg.seazone.properties/"
+ },
+ "uti_canvas": {
+  "n": "Canvas Central da UTI (guia da Carol)",
+  "u": "https://seazone-fund.slack.com/docs/TDLTVAWQ6/F0C73TT0MB5"
+ },
+ "uti_artefato": {
+  "n": "Artefato Pré-UTI e UTI de Franquias",
+  "u": "https://claude.ai/artifact/DGappyispNUr7Ru58AhuLa"
+ },
+ "uti_robo": {
+  "n": "Robô Derek (Coolify, app central-uti-robo, 11h + a cada 15 min)"
+ },
+ "uti_nekt": {
+  "n": "Nekt (notas do Airbnb, imóveis ativos, reservas, avaliações da Stays)"
+ },
+ "uti_sapron": {
+  "n": "Sapron · Central de Manutenção (cards com tag uti)"
+ },
+ "uti_scorepulse": {
+  "n": "ScorePulse (Score, notas por tipo, stop)",
+  "u": "https://scorepulse.seazone.com.br"
+ },
+ "uti_ocorr": {
+  "n": "Central de Ocorrências e Multas (API de leitura)"
+ },
+ "uti_qualidade": {
+  "n": "App da Qualidade (Victória): casos de falta de avaliações e leitura da IA"
+ },
+ "uti_hub": {
+  "n": "Hub da Consultoria Regional (visitas e conversas)",
+  "u": "https://consultoriaregional.seazone.dev/consultoria/planejamento"
+ },
+ "uti_appstop": {
+  "n": "App de Stop de Crescimento",
+  "u": "https://stopdecrescimento.seazone.properties"
+ },
+ "uti_email": {
+  "n": "E-mails automáticos pela conta anfitrioes@ (cópia: Vivianny e Isabella)"
+ },
+ "uti_slack": {
+  "n": "Slack · canal da UTI (#C0C2ZS620VD)"
+ },
+ "uti_endpoint": {
+  "n": "Endereço de leitura da Central (casos, eventos, planos, pedidos, regras)"
+ },
+ "uti_claude": {
+  "n": "Claude Code + endpoint de leitura"
+ },
+ "uti_anuncios": {
+  "n": "Board de recriação de anúncios (Conta 2)"
+ },
+ "uti_github": {
+  "n": "GitHub seazone-tech/central-uti"
+ },
+ "adm_sapron": {
+  "n": "Sapron"
+ },
+ "adm_despesas": {
+  "n": "Sapron · Central de Despesas",
+  "u": "https://sapron.com.br/despesas?status=Em+an%C3%A1lise"
+ },
+ "adm_claude": {
+  "n": "Claude Code + MCP Sapron"
+ },
+ "adm_slackdesp": {
+  "n": "Slack · #temp-aprovacao-despesas"
+ },
+ "adm_radar": {
+  "n": "Skill despesas-duplicadas → Slack #radar-de-despesas"
+ },
+ "adm_dash": {
+  "n": "Dashboard Financeiro de Franquias",
+  "u": "https://franquias-financeiro.seazone.dev"
+ },
+ "adm_suporte": {
+  "n": "Suporte Unificado (processo Taxa de limpeza)",
+  "u": "https://suporte-unificado.seazone.dev"
+ },
+ "adm_calc": {
+  "n": "Calculadora de Taxa de Limpeza 2026",
+  "u": "https://taxa-limpeza-2026.seazone.properties"
+ },
+ "adm_skilltaxa": {
+  "n": "Skill analise-taxa-limpeza (motor da calculadora + ocupação)"
+ },
+ "adm_mcptaxa": {
+  "n": "MCP taxa-limpeza (base viva, warnings, tabelas)"
+ },
+ "adm_nekt": {
+  "n": "Nekt (reservas, cadastro, pipes)"
+ },
+ "adm_stays": {
+  "n": "Stays"
+ },
+ "adm_slack": {
+  "n": "Slack"
+ },
+ "adm_fechamento": {
+  "n": "Slack · #fechamento"
+ },
+ "adm_compilado": {
+  "n": "Planilha Compilado (fechamento de repasses)"
+ },
+ "adm_crc": {
+  "n": "Planilha CRC (abatimentos)"
+ },
+ "adm_skillcom": {
+  "n": "Skill auditoria-comissao-franquias"
+ },
+ "adm_revisao": {
+  "n": "Planilha Revisão Comissões Franquias (Fechamento)"
+ },
+ "adm_contratos": {
+  "n": "Planilha Comissão do Host por Contrato/Aditivo"
+ },
+ "adm_bos": {
+  "n": "Planilha Controle de BO's e ajustes"
+ },
+ "adm_supfin": {
+  "n": "Suporte financeiro (forms)"
+ },
+ "adm_metabase": {
+  "n": "Metabase (cards 3608 e 3609)"
+ },
+ "adm_bi": {
+  "n": "BI Gestão / Financeiro (Conferência de Fechamento)"
+ },
+ "adm_jur": {
+  "n": "Suporte Jurídico (Formulário Seazone Serviços)"
+ },
+ "adm_clicksign": {
+  "n": "Clicksign"
+ },
+ "adm_sults": {
+  "n": "SULTS"
+ },
+ "adm_kpi": {
+  "n": "kpi-system (setor Backoffice – Financeiro)",
+  "u": "https://kpi-system.seazone.dev"
+ },
+ "adm_skillkpi": {
+  "n": "Skill kpis-franquias (Claude Code)"
+ },
+ "adm_github": {
+  "n": "GitHub seazone-tech (calculadora, dashboard, skills)"
+ },
+ "claude": {
+  "n": "Claude Code"
+ }
+};
+
+const MODE = {auto:"Automático", misto:"Misto", manual:"Manual"};
+const IA = ["Sem IA","IA assiste","IA executa"];
+const EX = {sistema:"Sistema", agente:"Agente", pessoa:"Pessoa"};
+const IMP = {recebe:"← Implantação", envia:"→ Implantação"};
+
+const TRAILS = [
+ {
+  "cls": "fin",
+  "k": "Trilha 1",
+  "n": "Danos de hóspede",
+  "o": "Levar o dano do lançamento pela franquia até o valor recuperado e o proprietário reembolsado, sem a franquia arcar com o dano do hóspede.",
+  "val": [
+   "Dano lançado no prazo",
+   "Cobrança com prova",
+   "Valor recuperado",
+   "Proprietário reembolsado"
+  ],
+  "mps": [
+   {
+    "id": "MP1",
+    "v": "Lançar · franquia",
+    "n": "Solicitar o dano",
+    "o": "Quem identifica e lança é a franquia. O BackOffice orienta pela Newbyte quando ela chama.",
+    "e": "Dano lançado com fotos, valor, orçamento ou NF e descrição no template.",
+    "val": "Dano cobrável dentro do prazo",
+    "opp": "A execução é da franquia e o nosso tempo vai nas dúvidas. Um aviso automático de prazo na tela do Host e um guia de lançamento reduziriam os chamados.",
+    "p": [
+     {
+      "id": "1.1",
+      "t": "Constatar e documentar o dano",
+      "m": "manual",
+      "ia": 0,
+      "ex": "pessoa",
+      "who": "Franquia",
+      "o": "Confirmar que o dano é do hóspede daquela reserva e reunir as provas.",
+      "e": "Fotos legíveis de cada item e orçamento ou link de compra.",
+      "how": [
+       "Franquia fotografa todos os danos e faz os orçamentos.",
+       "Mancha de enxoval só entra depois que a lavanderia não resolveu.",
+       "Hóspede errado fica fora do processo (risco jurídico)."
+      ],
+      "tools": [
+       "dn_host",
+       "cv_sol"
+      ]
+     },
+     {
+      "id": "1.2",
+      "t": "Lançar no Sapron ou no Host",
+      "m": "manual",
+      "ia": 0,
+      "ex": "pessoa",
+      "who": "Franquia",
+      "o": "Registrar cada item danificado na reserva certa.",
+      "e": "Dano em Solicitações, com tipo (enxoval, item, extravio, propriedade, pendência), motivo no template, valor e anexos.",
+      "how": [
+       "Host → Incidentes → Danos de Hóspede → Registrar dano; selecionar a reserva (fica azul-escura) antes de preencher.",
+       "Vários itens no mesmo lançamento com \"Adicionar item\".",
+       "Motivo no template: Item · Localização · Possível causa · Ocorrido · Observações.",
+       "Prazo: D+13, ou seja, 14 dias corridos contando o checkout como dia 1.",
+       "Não deixar o lançamento para o último dia, principalmente fim de semana ou depois das 18h. Perdido o prazo, o dano é finalizado sem pedir ajuste à franquia (cobrar a franquia não faz parte do processo)."
+      ],
+      "tools": [
+       "dn_host",
+       "dn_sapron",
+       "cv_sol"
+      ]
+     },
+     {
+      "id": "1.3",
+      "t": "Lançar despesa de reposição",
+      "m": "manual",
+      "ia": 0,
+      "ex": "pessoa",
+      "who": "Franquia",
+      "o": "Permitir que a franquia reponha o item antes de o dano ser pago.",
+      "e": "Despesa lançada; acima de R$ 300 com autorização do proprietário.",
+      "how": [
+       "Despesa de limpeza extra só é reembolsada depois que o hóspede ou o seguro pagar.",
+       "Se o valor não entrar, o ADM/FIN analisa as pendências do mês e pede ajuste."
+      ],
+      "tools": [
+       "dn_sapron",
+       "cv_limp"
+      ]
+     },
+     {
+      "id": "1.4",
+      "t": "Orientar a franquia no lançamento",
+      "m": "manual",
+      "ia": 0,
+      "ex": "pessoa",
+      "who": "Analista de Danos",
+      "o": "Ajudar a franquia a lançar certo quando ela pede ajuda.",
+      "e": "Dúvida respondida e dano lançado do jeito certo.",
+      "how": [
+       "Só quando a franquia chama na Newbyte; quem lança continua sendo ela.",
+       "Tag [Danos] Auxílio Lançamento; erro técnico do Sapron vira [Danos] Falha lançamento Danos."
+      ],
+      "tools": [
+       "dn_newbyte",
+       "dn_sapron",
+       "cv_cob"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "MP2",
+    "v": "Validar",
+    "n": "Validar o dano",
+    "o": "Só seguir para cobrança o dano que é dano e tem prova suficiente.",
+    "e": "Dano validado, cancelado com motivo ou escalado como esdrúxulo.",
+    "val": "Cobrança com chance real de ganho",
+    "opp": "É a única coluna 100% manual. A checagem de evidência e de valor contra a cotação é a próxima candidata a uma extensão ou a IA assistindo.",
+    "p": [
+     {
+      "id": "2.1",
+      "t": "Conferir evidências, NF e cotação",
+      "m": "manual",
+      "ia": 0,
+      "ex": "pessoa",
+      "who": "Analista de Danos",
+      "o": "Ver se as fotos, o orçamento ou a NF batem com o que foi lançado.",
+      "e": "Dano apto para cobrança.",
+      "how": [
+       "Abrir o dano no Sapron e seguir o Manual de Validação de Danos.",
+       "Conferir se o link de cotação é coerente com o recibo."
+      ],
+      "tools": [
+       "dn_sapron",
+       "cv_val"
+      ]
+     },
+     {
+      "id": "2.2",
+      "t": "Tratar dano esdrúxulo com mais critério",
+      "m": "manual",
+      "ia": 0,
+      "ex": "pessoa",
+      "who": "Analista de Danos",
+      "o": "Analisar com mais cuidado o caso sensível, sem tirá-lo do fluxo.",
+      "e": "Caso analisado com relatório e, quando preciso, com liderança e Jurídico envolvidos; resolução na Base de Conhecimento.",
+      "how": [
+       "Esdrúxulo: terceiros, autoridades, advogado, possível crime ou multa, valor acima de R$ 1.000.",
+       "Não vai para outra etapa: segue o mesmo fluxo de cobrança, só com mais critério.",
+       "Puxamos relatórios e envolvemos a liderança e o Jurídico quando necessário.",
+       "Box e vidro estourado: casos enviados ao Jurídico em 07/10/2026, sem regra combinada ainda."
+      ],
+      "tools": [
+       "dn_sapron",
+       "dn_slack",
+       "cv_val"
+      ]
+     },
+     {
+      "id": "2.3",
+      "t": "Pedir pendências à franquia",
+      "m": "manual",
+      "ia": 0,
+      "ex": "pessoa",
+      "who": "Analista de Danos",
+      "o": "Completar o dano sem abrir chamado à toa.",
+      "e": "Informação recebida ou dano cancelado.",
+      "how": [
+       "Mensagem pela Newbyte com a tag [Danos] Validação de Dano Franquias.",
+       "Lançamento fora do padrão vira [Danos] Ocorrência."
+      ],
+      "tools": [
+       "dn_newbyte",
+       "cv_val"
+      ]
+     },
+     {
+      "id": "2.4",
+      "t": "Cancelar o que não é válido",
+      "m": "manual",
+      "ia": 0,
+      "ex": "pessoa",
+      "who": "Analista de Danos",
+      "o": "Tirar da fila o que não deve ser cobrado.",
+      "e": "Card em Cancelado com motivo.",
+      "how": [
+       "Motivos fora do escopo: Cancelado Franquia (resolvido direto com o hóspede) e Item devolvido."
+      ],
+      "tools": [
+       "dn_sapron",
+       "cv_val"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "MP3",
+    "v": "Cobrar · Airbnb",
+    "n": "Cobrar pelo Airbnb",
+    "o": "Receber pelo AirCover ou pelo atendimento do Airbnb quando a reserva é Airbnb.",
+    "e": "Pedido enviado no prazo e acompanhado até pagamento ou recusa final.",
+    "val": "Valor recuperado sem falar com o hóspede",
+    "opp": "Abrir, envolver e finalizar já têm extensão. Falta o aviso de 14 dias na captura e a multa (Serviços Adicionais), que ainda é toda manual.",
+    "p": [
+     {
+      "id": "3.1",
+      "t": "Abrir o pedido no AirCover",
+      "m": "misto",
+      "ia": 0,
+      "ex": "sistema",
+      "who": "Sistema · AirCover Autofill",
+      "o": "Pedir o valor ao hóspede pela Central de Resoluções em até 14 dias.",
+      "e": "Pedido enviado com itens, fotos, recibo e mensagem padrão.",
+      "how": [
+       "Capturar dano (AirCover) no Sapron: a extensão acha o código HM sozinha, sem passar pela Stays.",
+       "Preenche itens, idade \"menos de 1 ano\", anexos e para na revisão.",
+       "Analista confere anexos, resolve o ícone ⚠️ e clica em Confirmar e ENVIAR.",
+       "A extensão ainda não avisa que passou dos 14 dias (checkout = dia 1): conferir a data antes de capturar."
+      ],
+      "tools": [
+       "dn_sapron",
+       "dn_airbnb",
+       "dn_metabase",
+       "cv_cob"
+      ]
+     },
+     {
+      "id": "3.2",
+      "t": "Registrar o pedido no Sapron",
+      "m": "auto",
+      "ia": 0,
+      "ex": "sistema",
+      "who": "Sistema · AirCover Autofill",
+      "o": "Deixar no Sapron o vínculo com o pedido do Airbnb.",
+      "e": "Código AirCover (HM), status Cobrança Airbnb e link CLSF no motivo.",
+      "how": [
+       "Padrão: a extensão grava sozinha depois do envio (validado em 03/10/2026).",
+       "Manual (passo a passo do canvas) quando a extensão der problema e nos pedidos de multa."
+      ],
+      "tools": [
+       "dn_sapron",
+       "cv_cob"
+      ]
+     },
+     {
+      "id": "3.3",
+      "t": "Envolver o Airbnb depois de 24 h",
+      "m": "auto",
+      "ia": 0,
+      "ex": "sistema",
+      "who": "Sistema · Extensão Acionar Airbnb",
+      "o": "Pedir a mediação quando o hóspede recusa ou não responde.",
+      "e": "Análise solicitada e itens atualizados até \"Concluído\".",
+      "how": [
+       "A extensão escreve a justificativa pelo tipo de item (reposição, higienização, conserto, faltando, limpeza extra).",
+       "Envia, espera, recarrega e atualiza cada item que o Airbnb pedir.",
+       "Substitui o texto que antes era feito no ChatGPT."
+      ],
+      "tools": [
+       "dn_airbnb",
+       "cv_cob"
+      ]
+     },
+     {
+      "id": "3.4",
+      "t": "Cobrar multa pelo Airbnb",
+      "m": "manual",
+      "ia": 0,
+      "ex": "pessoa",
+      "who": "Analista de Danos",
+      "o": "Cobrar infração do hóspede como serviço adicional.",
+      "e": "Pedido de Serviços Adicionais enviado; o hóspede tem 72 h para responder.",
+      "how": [
+       "Entra pelo Sapron como dano; a descrição diz que é multa.",
+       "Solicitar dinheiro → Serviços Adicionais, com valor, texto padrão e todas as provas.",
+       "Prova obrigatória: notificação formal e/ou imagem de câmera.",
+       "Se o hóspede abriu reclamação na plataforma, não dá para pedir pelo Airbnb: segue pela Newbyte."
+      ],
+      "tools": [
+       "dn_airbnb",
+       "dn_sapron",
+       "cv_cob"
+      ]
+     },
+     {
+      "id": "3.5",
+      "t": "Acompanhar a multa na Central de Mensagens",
+      "m": "manual",
+      "ia": 0,
+      "ex": "pessoa",
+      "who": "Analista de Danos",
+      "o": "Levar a multa até a decisão do Airbnb depois das 72 h.",
+      "e": "Airbnb envolvido e decisão (pagamento total, parcial ou encerramento) registrada no Sapron.",
+      "how": [
+       "Passadas as 72 h sem resposta ou com recusa, analisar o caso e clicar em Envolver Airbnb com uma justificativa curta.",
+       "Diferente da cobrança de dano: toda a tratativa da multa é na Central de Mensagens do Airbnb, não por e-mail.",
+       "Achar a conversa pelo primeiro nome do hóspede; responder pedidos de informação e prova por lá.",
+       "O Airbnb só paga quando o hóspede não respondeu; aqui ele é mediador, não seguradora."
+      ],
+      "tools": [
+       "dn_airbnb",
+       "dn_sapron",
+       "cv_cob"
+      ]
+     },
+     {
+      "id": "3.6",
+      "t": "Acompanhar a decisão do dano por e-mail",
+      "m": "manual",
+      "ia": 0,
+      "ex": "pessoa",
+      "who": "Analista de Danos",
+      "o": "Responder o Airbnb dentro do prazo até a decisão final.",
+      "e": "Pagamento, recusa definitiva ou contestação registrada.",
+      "how": [
+       "Diário, na conta delegada do anfitrião Seazone; busca pelo código HM.",
+       "Primeiro e-mail promete retorno em até 5 dias úteis.",
+       "O card só sai de Cobrança Airbnb com a conclusão da plataforma."
+      ],
+      "tools": [
+       "dn_gmail",
+       "dn_sapron",
+       "cv_cob"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "MP4",
+    "v": "Cobrar · Hóspede",
+    "n": "Cobrar o hóspede na Newbyte",
+    "o": "Cobrar direto do hóspede: outras OTAs, multa com reclamação aberta e o que o Airbnb não resolveu.",
+    "e": "Pagamento recebido ou caso encaminhado após 3 tentativas.",
+    "val": "Valor recuperado direto do hóspede",
+    "opp": "A extensão já faz tudo, menos responder o hóspede. Essa conversa (objeções, negociação, pagamento) é onde o Assistente de Danos pode entrar.",
+    "p": [
+     {
+      "id": "4.1",
+      "t": "Enviar a tentativa de contato (1ª a 3ª)",
+      "m": "misto",
+      "ia": 0,
+      "ex": "sistema",
+      "who": "Sistema · Extensão Cobrança Newbyte",
+      "o": "Fazer as 3 tentativas em dias seguidos, sem errar o contato.",
+      "e": "Mensagem enviada e confirmada pela Newbyte.",
+      "how": [
+       "A extensão acha o hóspede pelo telefone, monta a mensagem da tentativa e mostra a prévia.",
+       "A analista clica em ENVIAR MENSAGEM; a extensão espera a confirmação da Newbyte.",
+       "No 1º contato muda o status para Cobrança Hóspede (\"Primeiro contato realizado\").",
+       "Cobrança diária: uma tentativa por dia até a 3ª; 1º contato em até 24 h depois que o dano vai para cobrança."
+      ],
+      "tools": [
+       "dn_newbyte",
+       "dn_sapron",
+       "cv_matriz"
+      ]
+     },
+     {
+      "id": "4.2",
+      "t": "Registrar a tratativa no Sapron",
+      "m": "auto",
+      "ia": 0,
+      "ex": "sistema",
+      "who": "Sistema · Extensão Cobrança Newbyte",
+      "o": "Contar as tentativas pelo Sapron, não pela memória.",
+      "e": "Tratativa com etiqueta Nº Contato, data, valor e link do contato na Newbyte.",
+      "how": [
+       "Número da tentativa = maior etiqueta \"Nº Contato\" do Histórico Tratativa.",
+       "O link do contato vai na descrição para a próxima tentativa ir direto."
+      ],
+      "tools": [
+       "dn_sapron",
+       "cv_cob"
+      ]
+     },
+     {
+      "id": "4.3",
+      "t": "Registrar o retorno do fim do dia",
+      "m": "misto",
+      "ia": 0,
+      "ex": "sistema",
+      "who": "Sistema · Extensão Cobrança Newbyte",
+      "o": "Saber se o hóspede respondeu em cada tentativa.",
+      "e": "Comentário \"Sem retorno na Nª tentativa\" ou resumo do que foi tratado.",
+      "how": [
+       "Clique na extensão dentro da conversa da Newbyte; o comentário entra sem mudar o status.",
+       "Resposta que chega depois do comentário conta como sem retorno."
+      ],
+      "tools": [
+       "dn_newbyte",
+       "dn_sapron",
+       "cv_cob"
+      ]
+     },
+     {
+      "id": "4.4",
+      "t": "Responder o hóspede e negociar",
+      "m": "manual",
+      "ia": 0,
+      "ex": "pessoa",
+      "who": "Analista de Danos",
+      "o": "Responder com o argumento certo, fechar o maior valor possível e combinar o pagamento.",
+      "e": "Acordo e forma de pagamento combinados, ou recusa registrada.",
+      "how": [
+       "É a única parte da cobrança do hóspede que continua manual; o resto é da extensão.",
+       "6 categorias: negação, prazo, valor, valor baixo (< R$ 20), negociação parcial, conflito.",
+       "Parcial: meta de recuperar 50–70% do valor antes de escalar.",
+       "Pagamento: Pix na maioria das vezes; link de pagamento pedido ao Financeiro no #suporte-financeiro."
+      ],
+      "tools": [
+       "dn_newbyte",
+       "dn_fin",
+       "cv_matriz"
+      ]
+     },
+     {
+      "id": "4.5",
+      "t": "Finalizar o dano pago",
+      "m": "misto",
+      "ia": 0,
+      "ex": "sistema",
+      "who": "Sistema · Extensão Cobrança Newbyte",
+      "o": "Fechar o dano pago pelo hóspede sem montar nada à mão.",
+      "e": "Dano Finalizado · Pago com comprovante e reembolso ao proprietário registrado.",
+      "how": [
+       "A analista só informa o valor pago.",
+       "A extensão baixa a imagem do comprovante, finaliza o dano como Pago e registra o reembolso no Sapron."
+      ],
+      "tools": [
+       "dn_newbyte",
+       "dn_sapron",
+       "cv_cob"
+      ]
+     },
+     {
+      "id": "4.6",
+      "t": "Encaminhar após 3 tentativas",
+      "m": "misto",
+      "ia": 0,
+      "ex": "sistema",
+      "who": "Sistema · Extensão Cobrança Newbyte",
+      "o": "Não deixar o dano parado depois da cobrança amigável.",
+      "e": "Dano em Cobrança EasyCover, Cobrança Judicial ou finalizado sem sucesso.",
+      "how": [
+       "Imóvel com EasyCover → seguro (MP5).",
+       "R$ 250 ou mais sem EasyCover → Cobrança Judicial (MP6).",
+       "Abaixo de R$ 250 → finalizar sem sucesso (7.3); a extensão não finaliza sozinha."
+      ],
+      "tools": [
+       "dn_sapron",
+       "cv_ext"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "MP5",
+    "v": "Cobrar · Seguro",
+    "n": "Acionar os seguros",
+    "o": "Receber do seguro quando hóspede e Airbnb não pagaram, ou pagaram só parte.",
+    "e": "Sinistro enviado pela extensão, protocolo no Sapron e valor recebido.",
+    "val": "Valor recuperado mesmo sem o hóspede pagar",
+    "opp": "Abrir, enviar e registrar o sinistro já é automático. O que sobra de manual é o acompanhamento: pedidos de documento por e-mail, termo de aceite e confirmação do depósito.",
+    "p": [
+     {
+      "id": "5.1",
+      "t": "Decidir se vale acionar o EasyCover",
+      "m": "manual",
+      "ia": 0,
+      "ex": "pessoa",
+      "who": "Analista de Danos",
+      "o": "Acionar só quando a franquia do seguro deixa algum valor.",
+      "e": "Decisão de abrir um sinistro por caso, com o valor que falta receber.",
+      "how": [
+       "Até 1 ano do ocorrido; um sinistro com todos os itens (cada sinistro desconta uma franquia).",
+       "Franquia de 10% com mínimo por cobertura: danos gerais R$ 150, roubo/furto e elétrico R$ 500, vendaval/granizo R$ 300, raio sem franquia.",
+       "Desastre natural: só os riscos nomeados; enchente e alagamento ficam fora.",
+       "Ao acionar, para a conversa com o hóspede (avisar a franquia).",
+       "O EasyCover não paga laudo; o custo do laudo fica com o proprietário."
+      ],
+      "tools": [
+       "dn_sapron",
+       "cv_easy"
+      ]
+     },
+     {
+      "id": "5.2",
+      "t": "Abrir e enviar o sinistro no portal NOW",
+      "m": "auto",
+      "ia": 0,
+      "ex": "sistema",
+      "who": "Sistema · Extensão Sinistro EasyCover",
+      "o": "Abrir o sinistro sem digitar nada à mão.",
+      "e": "Sinistro enviado à NOW e protocolo NS gerado.",
+      "how": [
+       "Passo 0: último comentário do dano com os bens (marca, modelo, tempo de uso).",
+       "A extensão busca itens, endereço, apólice, bilhete e link do anúncio; avisa apólice fora da vigência.",
+       "Preenche o formulário e envia sozinha (atualizada em 09/10/2026). Segurado é sempre a Seazone.",
+       "Não anexa documentos: eles vão depois, por e-mail, quando o seguro pedir (5.4)."
+      ],
+      "tools": [
+       "dn_sapron",
+       "dn_now",
+       "cv_easy"
+      ]
+     },
+     {
+      "id": "5.3",
+      "t": "Mudar o status e registrar o protocolo NS",
+      "m": "auto",
+      "ia": 0,
+      "ex": "sistema",
+      "who": "Sistema · Extensão Sinistro EasyCover",
+      "o": "Evitar dois sinistros para o mesmo caso.",
+      "e": "Dano em Cobrança EasyCover com o protocolo NS na tratativa.",
+      "how": [
+       "Depois do envio, a extensão muda o status no Sapron e grava o número do protocolo.",
+       "O Sapron não tem outro lugar que mostre que o caso foi para o seguro."
+      ],
+      "tools": [
+       "dn_sapron",
+       "cv_easy"
+      ]
+     },
+     {
+      "id": "5.4",
+      "t": "Acompanhar e receber o EasyCover",
+      "m": "manual",
+      "ia": 0,
+      "ex": "pessoa",
+      "who": "Analista de Danos",
+      "o": "Enviar os documentos, responder o seguro e garantir o depósito.",
+      "e": "Valor recebido e \"pago pelo EasyCover\" no histórico.",
+      "how": [
+       "Pedidos de documento chegam no seguro@seazone.com.br; os anexos são enviados à mão: cartão CNPJ, comprovante de endereço, fotos e vídeos, NF ou prova de que o item existia, orçamento ou laudo.",
+       "Termo de aceite com valor apurado, depreciação, franquia e líquido; devolvido com os dados bancários da Seazone, prazo de 30 dias.",
+       "Comprovante no Drive com o nome no padrão.",
+       "Para saber quem pagou (hóspede, AirCover ou EasyCover), olhar a anotação do histórico, não a fase do card. Vale para todos os casos."
+      ],
+      "tools": [
+       "dn_seguro",
+       "dn_drive",
+       "dn_sapron",
+       "cv_easy"
+      ]
+     },
+     {
+      "id": "5.5",
+      "t": "Acionar o RC de parceiros Booking",
+      "m": "manual",
+      "ia": 0,
+      "ex": "pessoa",
+      "who": "Analista de Danos",
+      "o": "Cobrir dano a terceiros ou lesão em reserva Booking (Zurich, regulado pela Crawford). Menos frequente, mas existe.",
+      "e": "Aviso de sinistro aberto e indenização recebida.",
+      "how": [
+       "Não cobre dano material menor do próprio imóvel (móveis, louça, limpeza, chaves).",
+       "Reserva achada pelo filtro de datas (não aceita código); Crawford responde em até 48 h úteis.",
+       "Caso real: elevador alagado, R$ 9.430, 2–3 meses.",
+       "Processo próprio de pagamento: a indenização do RC cai na conta do sócio Kremer, que transfere para a Seazone."
+      ],
+      "tools": [
+       "dn_rcb",
+       "dn_crawford",
+       "dn_gmail",
+       "cv_rcb"
+      ],
+      "chk": "O canvas do RC Booking expõe CPF e conta bancária do sócio: tirar esses dados do canvas."
+     },
+     {
+      "id": "5.6",
+      "t": "Acionar o RC de anfitriões Airbnb",
+      "m": "manual",
+      "ia": 0,
+      "ex": "pessoa",
+      "who": "Analista de Danos",
+      "o": "Cobrir lesão ou dano a terceiros e áreas comuns em reserva Airbnb, quando o AirCover não cobre.",
+      "e": "Formulário enviado e caso tratado com a Crawford.",
+      "how": [
+       "Formulário com dados da Seazone; data do ocorrido = checkout.",
+       "Contato da Crawford por e-mail (olhar spam).",
+       "A indenização segue o mesmo fluxo do RC Booking (conta do sócio Kremer, depois transferência para a Seazone)."
+      ],
+      "tools": [
+       "dn_rca",
+       "dn_crawford",
+       "dn_gmail",
+       "cv_rca"
+      ],
+      "chk": "O canvas está incompleto (casos ainda em análise)."
+     }
+    ]
+   },
+   {
+    "id": "MP6",
+    "v": "Cobrar · Jurídico",
+    "n": "Cobrança extrajudicial",
+    "o": "Formalizar a cobrança quando a conversa não resolveu e o valor compensa.",
+    "e": "Notificação enviada, 7 dias de prazo e caso concluído ou em análise de ação judicial.",
+    "val": "Valor recuperado nos casos difíceis",
+    "opp": "Aviso e evidências já vão sozinhos para o Jurídico. O que resta de manual é abrir o suporte da notificação e conferir o retorno depois de 7 dias; um lembrete automático do 7º dia seria o próximo passo.",
+    "p": [
+     {
+      "id": "6.1",
+      "t": "Preparar e mover para Cobrança Judicial",
+      "m": "misto",
+      "ia": 0,
+      "ex": "sistema",
+      "who": "Sistema · Extensão Cobrança Newbyte",
+      "o": "Chegar ao Jurídico com o dano completo.",
+      "e": "Dano em Cobrança Judicial com o relato do hóspede como último comentário.",
+      "how": [
+       "Comentário com o relato do hóspede (o que respondeu, se contestou, se sumiu).",
+       "Conferir ocorrido, valor e anexos; só então mover a etapa.",
+       "O agente usa o comentário registrado na transição de fase (o card chegava em branco no início; corrigido)."
+      ],
+      "tools": [
+       "dn_sapron",
+       "cv_ext"
+      ]
+     },
+     {
+      "id": "6.2",
+      "t": "Avisar o Jurídico às 18h",
+      "m": "auto",
+      "ia": 0,
+      "ex": "sistema",
+      "who": "Sistema · Olimpo · agente Cobrança Judicial",
+      "o": "Ninguém precisar montar o card à mão.",
+      "e": "Card no canal com reserva, imóvel, hóspede, OTA, valor e relatos; Jurídico marcado.",
+      "how": [
+       "Lê os danos que entraram em Cobrança Judicial nas últimas 24 h.",
+       "Informa na conversa quantos anexos o dano tem."
+      ],
+      "tools": [
+       "dn_ext",
+       "dn_sapron",
+       "cv_ext"
+      ]
+     },
+     {
+      "id": "6.3",
+      "t": "Anexar as evidências na conversa",
+      "m": "auto",
+      "ia": 0,
+      "ex": "sistema",
+      "who": "Sistema · Olimpo · agente Cobrança Judicial",
+      "o": "O Jurídico ter as provas sem entrar no Sapron.",
+      "e": "Imagens e anexos do dano na conversa do card.",
+      "how": [
+       "O agente anexa sozinho as evidências do dano na conversa do card; antes o BackOffice baixava do Sapron e enviava à mão."
+      ],
+      "tools": [
+       "dn_ext",
+       "dn_sapron",
+       "cv_ext"
+      ]
+     },
+     {
+      "id": "6.4",
+      "t": "Jurídico analisa o caso",
+      "m": "manual",
+      "ia": 0,
+      "ex": "pessoa",
+      "who": "Jurídico",
+      "o": "Decidir se o caso é passível de notificação extrajudicial.",
+      "e": "Resposta do Jurídico na conversa do card.",
+      "how": [
+       "Feito pelo time do Jurídico a partir do card e das provas."
+      ],
+      "tools": [
+       "dn_ext",
+       "cv_ext"
+      ]
+     },
+     {
+      "id": "6.5",
+      "t": "Abrir o suporte da notificação",
+      "m": "manual",
+      "ia": 0,
+      "ex": "pessoa",
+      "who": "Analista de Danos",
+      "o": "Pedir a confecção da notificação quando o Jurídico aprova.",
+      "e": "Suporte aberto; o Jurídico avisa quando a notificação foi enviada.",
+      "how": [
+       "Se o Jurídico responde que é passível de notificação, o BackOffice abre o suporte no formulário do Jurídico.",
+       "Só depois o Jurídico informa que a notificação foi enviada ao hóspede."
+      ],
+      "tools": [
+       "dn_seajuri",
+       "dn_ext",
+       "cv_ext"
+      ]
+     },
+     {
+      "id": "6.6",
+      "t": "Aguardar 7 dias e verificar o retorno",
+      "m": "manual",
+      "ia": 0,
+      "ex": "pessoa",
+      "who": "Analista de Danos",
+      "o": "Dar prazo ao hóspede e fechar o caso.",
+      "e": "Até R$ 2.500: dano finalizado e ✅ na conversa. Acima: aguardando análise da ação judicial.",
+      "how": [
+       "Depois da notificação, o caso fica parado 7 dias.",
+       "Depois disso, o BackOffice verifica com o Jurídico se houve retorno ou pagamento.",
+       "Valor até R$ 2.500 → finaliza no Sapron. Acima de R$ 2.500 → aguarda a análise da ação judicial (6.7)."
+      ],
+      "tools": [
+       "dn_ext",
+       "dn_sapron",
+       "cv_ext"
+      ]
+     },
+     {
+      "id": "6.7",
+      "t": "Ação judicial acima de R$ 2.500",
+      "m": "manual",
+      "ia": 0,
+      "ex": "pessoa",
+      "who": "Jurídico",
+      "o": "Buscar o ressarcimento pela via legal nos casos grandes.",
+      "e": "Ação judicial analisada e, se viável, iniciada.",
+      "how": [
+       "Decisão e condução do Jurídico."
+      ],
+      "tools": [
+       "dn_seajuri",
+       "cv_ext"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "MP7",
+    "v": "Finalizar",
+    "n": "Finalizar o dano",
+    "o": "Fechar o dano com o resultado certo e devolver o valor ao proprietário.",
+    "e": "Dano Finalizado (Pago ou sem sucesso) e reembolso registrado.",
+    "val": "Proprietário reembolsado",
+    "opp": "Pago pelo Airbnb e pelo hóspede já fecham por extensão. Falta o pago pelo EasyCover para a coluna ficar toda automatizada.",
+    "p": [
+     {
+      "id": "7.1",
+      "t": "Finalizar como Pago",
+      "m": "misto",
+      "ia": 0,
+      "ex": "sistema",
+      "who": "Sistema · Extensão Finalizar Dano",
+      "o": "Registrar quem pagou e quanto.",
+      "e": "Status Finalizado · Pago, motivo \"Pago pelo Airbnb / hóspede / EasyCover — R$ X\".",
+      "how": [
+       "Pela extensão (Airbnb): print da tela do pedido, acha o dano pelo imóvel e pelo CLSF, mostra o resumo e só roda com o clique em FINALIZAR DANO.",
+       "Pago pelo hóspede: Extensão Cobrança Newbyte (4.5), a analista só informa o valor.",
+       "EasyCover: à mão, mesmo caminho em Mudar Status."
+      ],
+      "tools": [
+       "dn_airbnb",
+       "dn_sapron",
+       "cv_cob"
+      ]
+     },
+     {
+      "id": "7.2",
+      "t": "Registrar o reembolso ao proprietário",
+      "m": "misto",
+      "ia": 0,
+      "ex": "sistema",
+      "who": "Sistema · Extensão Finalizar Dano",
+      "o": "Fazer o valor chegar ao proprietário.",
+      "e": "Reembolso com dono Proprietário, valor pago e comprovante; Valor Pago atualizado.",
+      "how": [
+       "As extensões anexam o comprovante (print do Airbnb ou imagem do pagamento do hóspede) e conferem o Valor Pago no topo.",
+       "O valor entra no repasse do mês seguinte ao pagamento."
+      ],
+      "tools": [
+       "dn_sapron",
+       "cv_cob"
+      ]
+     },
+     {
+      "id": "7.3",
+      "t": "Finalizar sem sucesso",
+      "m": "misto",
+      "ia": 0,
+      "ex": "sistema",
+      "who": "Sistema · Extensão Cobrança Newbyte",
+      "o": "Encerrar com o motivo certo para medir onde perdemos.",
+      "e": "Finalizado sem sucesso com um dos motivos padrão.",
+      "how": [
+       "Cobrança do hóspede abaixo de R$ 250 depois das 3 tentativas: a Extensão Cobrança Newbyte prepara, mas não finaliza sozinha; a analista confirma.",
+       "Demais casos à mão em Mudar Status.",
+       "Motivos: recusa (hospedagem ou cobrança indevida), perdemos o prazo, franquia fora do prazo, parou de responder, sem contato, Airbnb não pagou, sem provas."
+      ],
+      "tools": [
+       "dn_sapron",
+       "cv_cob"
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "cls": "fin2",
+  "k": "Trilha 2",
+  "n": "Administrativo e Financeiro das franquias",
+  "o": "Custo certo em cada imóvel e repasse certo para cada franquia, com a rede crescendo só onde a franquia opera bem.",
+  "val": [
+   "Custo certo em cada imóvel",
+   "Repasse certo para cada franquia",
+   "Franquia certa recebe o imóvel",
+   "Rede cresce com qualidade"
+  ],
+  "mps": [
+   {
+    "id": "MP8",
+    "v": "Despesas",
+    "n": "Auditar a aprovação de despesas",
+    "o": "Garantir que a IA aprova certo e que nenhum custo entra duas vezes.",
+    "e": "Amostra do dia auditada, erro acionado ao Sapron, duplicadas apontadas, franquia sem despesa com ocorrência.",
+    "val": "Custo certo em cada imóvel",
+    "opp": "A aprovação já é 90% automática. O próximo passo é a auditoria da amostra virar relatório gerado pelo agente, com a analista só validando os casos marcados.",
+    "p": [
+     {
+      "id": "8.1",
+      "t": "Aprovar despesas por IA",
+      "m": "auto",
+      "ia": 2,
+      "ex": "agente",
+      "who": "Agente · IA de aprovação do Sapron (Squad Franquia)",
+      "o": "Validar e aprovar as despesas lançadas pelas franquias sem fila humana.",
+      "e": "Despesa aprovada, pendenciada ou em espera, com justificativa e regras checadas.",
+      "how": [
+       "A IA do Sapron checa as regras por categoria e grava a decisão no log de auditoria da despesa.",
+       "Liberada para todas as categorias em jun/2026; o aprovador registrado é a Automação Hospedagem."
+      ],
+      "tools": [
+       "adm_despesas"
+      ],
+      "imp": {
+       "d": "recebe",
+       "t": "A Implantação lança no Sapron a despesa da taxa de implantação paga à franquia (Onboarding; valor por nº de quartos: studio/1q R$ 200, 2q 250, 3q 300, 4+ 350, GOps 100) quando a implantação é finalizada; a despesa entra para aprovação. Dono do lado da Implantação: Alice Candian (refinamento de 01/09/2026, kanban seazone-anuncios)."
+      }
+     },
+     {
+      "id": "8.2",
+      "t": "Auditar a amostra do dia",
+      "m": "manual",
+      "ia": 1,
+      "ex": "pessoa",
+      "who": "Analista Adm/Fin",
+      "o": "Conferir se a IA decidiu como a regra manda.",
+      "e": "Amostra classificada: aprovação correta, oportunidade de melhoria ou erro da IA.",
+      "how": [
+       "Todo dia útil, sobre as despesas do dia útil anterior (segunda cobre a sexta).",
+       "Claude com o MCP do Sapron seleciona a amostra: acima de R$ 300, danos de hóspede e limpeza extra.",
+       "Conferência de valor, documento, autorização, categoria, descrição e responsável pelo pagamento."
+      ],
+      "tools": [
+       "adm_claude",
+       "adm_despesas"
+      ]
+     },
+     {
+      "id": "8.3",
+      "t": "Acionar o Sapron quando a IA erra",
+      "m": "manual",
+      "ia": 0,
+      "ex": "pessoa",
+      "who": "Analista Adm/Fin",
+      "o": "Corrigir a regra, não só o caso.",
+      "e": "Pedido no canal com decisão tomada, decisão esperada, evidência e regra a revisar.",
+      "how": [
+       "Ciclo: auditoria → erro → acionamento → ajuste da regra → nova validação.",
+       "Indicadores: precisão das aprovações e taxa de erro da IA, por categoria e regra."
+      ],
+      "tools": [
+       "adm_slackdesp"
+      ]
+     },
+     {
+      "id": "8.4",
+      "t": "Radar de despesas duplicadas",
+      "m": "auto",
+      "ia": 2,
+      "ex": "agente",
+      "who": "Agente (Claude)",
+      "o": "Pegar o mesmo lançamento registrado mais de uma vez para o mesmo imóvel.",
+      "e": "Resumo no #radar-de-despesas com grupos suspeitos, valor em risco e confiança (alta, média, a conferir).",
+      "how": [
+       "Skill despesas-duplicadas roda todo dia útil às 9h por tarefa agendada, e sob demanda por qualquer pessoa do time.",
+       "Mesmo imóvel, categoria e valor em 3 meses; descritivo idêntico ou 85% parecido; anexo igual sobe a confiança; contas recorrentes ficam de fora.",
+       "Só aponta: quem decide e corrige no Sapron é a equipe.",
+       "Taxa de implantação: em 08–14/09 a automação e um lançamento manual registraram o mesmo valor em 27 imóveis (R$ 6.300), ambos aprovados; o radar não pegou porque os descritivos eram diferentes. O botão novo da Implantação consulta despesa Onboarding do imóvel antes de lançar. A skill da analista Adm/Fin foi corrigida e agora pega a duplicidade mesmo com descritivo diferente (Isa, 16/10/2026)."
+      ],
+      "tools": [
+       "adm_radar",
+       "adm_despesas"
+      ],
+      "aud": "Conferência dos grupos de confiança alta e média no Sapron."
+     },
+     {
+      "id": "8.5",
+      "t": "Ocorrência para franquia sem despesa",
+      "m": "misto",
+      "ia": 0,
+      "ex": "sistema",
+      "who": "Sistema · Dashboard Financeiro de Franquias",
+      "o": "Achar franquia madura que não lançou nenhum custo no mês (custo não repassado ou Sapron sem uso).",
+      "e": "Ocorrência aberta por franquia apontada, na primeira semana do mês.",
+      "how": [
+       "Quadro Franqueados ativos sem despesa do dashboard financeiro, no último mês fechado: franquia ativa, zero lançamento, carteira e tempo de operação acima do corte, exclusões fixas."
+      ],
+      "tools": [
+       "adm_dash",
+       "adm_sapron"
+      ],
+      "aud": "Lista conferida antes de abrir as ocorrências."
+     }
+    ]
+   },
+   {
+    "id": "MP9",
+    "v": "Taxa de limpeza",
+    "n": "Analisar e alterar a taxa de limpeza",
+    "o": "Toda taxa cobrir o custo real da limpeza sem tirar a competitividade do imóvel.",
+    "e": "Pedido respondido com parecer pela régua, taxa alterada no Sapron e na Stays, cadastro e Portfólio sob controle.",
+    "val": "Custo certo em cada imóvel",
+    "opp": "A análise já sai do motor da calculadora. Os ganhos seguintes: correção de cadastro apontada pelos warnings virar chamado automático à franquia, e o Portfólio virar rotina mensal com lista pronta de alteração em massa.",
+    "p": [
+     {
+      "id": "9.1",
+      "t": "Receber a solicitação",
+      "m": "auto",
+      "ia": 0,
+      "ex": "sistema",
+      "who": "Sistema · Suporte Unificado",
+      "o": "Todo pedido virar card com imóvel, quem pediu e objetivo (aumento, redução, migração, capacidade).",
+      "e": "Card no Suporte Unificado, processo Taxa de limpeza, atribuído ao BackOffice.",
+      "how": [
+       "Franquia, CS Proprietários, RM, Implantação e Suporte abrem pelo suporte de franquias.",
+       "Consulta sem pedido de alteração não conta como alteração.",
+       "O Suporte Franquias também abre o pedido de alteração de taxa a pedido da franquia."
+      ],
+      "tools": [
+       "adm_suporte"
+      ],
+      "imp": {
+       "d": "recebe",
+       "t": "Pedidos de alteração de taxa abertos pela Implantação (e por franquia, CS, RM, Suporte) viram card."
+      }
+     },
+     {
+      "id": "9.2",
+      "t": "Analisar pela régua da calculadora",
+      "m": "misto",
+      "ia": 1,
+      "ex": "pessoa",
+      "who": "Analista Adm/Fin",
+      "o": "Decidir com um critério só: o custo real da limpeza.",
+      "e": "Parecer aprovado, reprovado, não reduzir ou contraproposta, com texto pronto para quem pediu.",
+      "how": [
+       "Skill analise-taxa-limpeza roda o motor da Calculadora 2026 (lavanderia da praça, mão de obra, material, amenities, deslocamento, área privativa, comissão da OTA) e busca a ocupação na Nekt. Ocupação não entra na taxa, só no parecer.",
+       "Aumento: ocupação abaixo de 50% em 90 dias reprova. Redução: franquia pede, aprovada; proprietário pede, só encaminha à franquia se a taxa está acima da régua e há risco de distrato, senão não reduzir (com 5 ou mais imóveis, sobe à franquia pelo porte); RM com ocupação ruim recebe contraproposta.",
+       "Contestação em lote: a planilha de custos da franquia é comparada linha a linha com a régua."
+      ],
+      "tools": [
+       "adm_skilltaxa",
+       "adm_calc",
+       "adm_nekt",
+       "adm_claude"
+      ],
+      "aud": "A decisão é da analista; a skill só sugere e redige."
+     },
+     {
+      "id": "9.3",
+      "t": "Validar com a coordenação",
+      "m": "manual",
+      "ia": 0,
+      "ex": "pessoa",
+      "who": "Coordenação do BackOffice e diretoria",
+      "o": "Exceção do imóvel ou decisão estratégica passar por quem tem alçada.",
+      "e": "Decisão registrada no card.",
+      "how": [
+       "Casos fora da régua (exceção, retenção, grande operação) vão à coordenação do BackOffice; desde set/2026 decisões de régua passam pela diretoria (Carol)."
+      ],
+      "tools": [
+       "adm_suporte",
+       "adm_slack"
+      ]
+     },
+     {
+      "id": "9.4",
+      "t": "Alterar a taxa no Sapron e na Stays",
+      "m": "manual",
+      "ia": 0,
+      "ex": "pessoa",
+      "who": "Analista Adm/Fin",
+      "o": "O valor decidido valer na venda.",
+      "e": "Taxa alterada nos dois sistemas em até 24 h e card concluído como Aprovado ou Recusado.",
+      "how": [
+       "BackOffice altera no Sapron e na Stays e responde na origem com a justificativa.",
+       "Migração: a alteração vale na data da migração. Capacidade: a calculadora recalcula depois que o cadastro é atualizado."
+      ],
+      "tools": [
+       "adm_sapron",
+       "adm_stays",
+       "adm_suporte"
+      ]
+     },
+     {
+      "id": "9.5",
+      "t": "Controlar e auditar os warnings da calculadora",
+      "m": "misto",
+      "ia": 0,
+      "ex": "sistema",
+      "who": "Sistema · Calculadora de Taxa de Limpeza 2026",
+      "o": "Cadastro errado não virar taxa errada.",
+      "e": "Warnings tratados: cadastro corrigido no Sapron ou exceção validada com motivo.",
+      "how": [
+       "A calculadora renova a base do Sapron às 8h e 15h e roda 13 checagens: sem banheiro ou capacidade, zero quartos, sem taxa, sem cama, camas acima ou abaixo da capacidade, capacidade, lavabo, banheiro e tipo divergindo da Stays, sem anúncio na Stays, região destoante e travesseiros fora do padrão.",
+       "A analista confere a aba Warnings, pede a correção do cadastro (franquia ou Implantação, via suporte) ou registra a exceção com motivo.",
+       "Lacuna conhecida: imóveis em onboarding ficam fora do universo dos warnings."
+      ],
+      "tools": [
+       "adm_calc",
+       "adm_mcptaxa",
+       "adm_sapron",
+       "adm_suporte"
+      ],
+      "aud": "Conferência periódica da aba Warnings e das exceções registradas (motivo e data).",
+      "imp": {
+       "d": "recebe",
+       "t": "O cadastro feito pela Implantação (quartos, camas, capacidade, tipo) alimenta os warnings; erro de cadastro volta como pedido de correção."
+      }
+     },
+     {
+      "id": "9.6",
+      "t": "Auditar o Portfólio (taxas fora da régua)",
+      "m": "misto",
+      "ia": 1,
+      "ex": "pessoa",
+      "who": "Analista Adm/Fin",
+      "o": "Toda taxa praticada ficar dentro de 10% da régua, ou ter exceção de preço validada.",
+      "e": "Lista de alteração em massa (subir e baixar) por faixa de desvio, mais exceções validadas.",
+      "how": [
+       "A aba Portfólio ordena os imóveis pelo desvio entre taxa e régua; a varredura da base inteira com o motor gera as faixas 11 a 20%, 21 a 40% e acima de 41%.",
+       "Simulador decide subir, baixar ou abrir exceção; nas grandes operações a decisão é por prédio.",
+       "Exceções de preço entram na semente da calculadora por PR e importação por um admin."
+      ],
+      "tools": [
+       "adm_calc",
+       "adm_skilltaxa",
+       "adm_claude",
+       "adm_github"
+      ],
+      "aud": "Revisão das exceções de preço: cada uma com motivo e data de validação."
+     },
+     {
+      "id": "9.7",
+      "t": "Grandes operações, capacidade e migração",
+      "m": "manual",
+      "ia": 0,
+      "ex": "pessoa",
+      "who": "Analista Adm/Fin",
+      "o": "Tratar os casos que mudam a régua do imóvel.",
+      "e": "Taxa de GOP padronizada por prédio; taxa recalculada após mudança de capacidade; taxa ajustada na data da migração.",
+      "how": [
+       "Grande operação: prédio vira ou deixa de ser GOP com confirmação da Expansão; tabela por empreendimento na calculadora.",
+       "Capacidade: estimativa provisória por imóvel parecido e recálculo depois que o Sapron é atualizado.",
+       "Migração: a Supervisão de Suporte avisa e o BackOffice altera na data da migração.",
+       "O Suporte Franquias pode indicar a mudança de capacidade do imóvel, o que leva ao recálculo da taxa."
+      ],
+      "tools": [
+       "adm_calc",
+       "adm_sapron",
+       "adm_suporte"
+      ],
+      "imp": {
+       "d": "recebe",
+       "t": "Mudança de capacidade e entrada de grande operação chegam da Implantação/Expansão e mudam a régua do imóvel."
+      }
+     }
+    ]
+   },
+   {
+    "id": "MP10",
+    "v": "Repasses",
+    "n": "Garantir o repasse certo",
+    "o": "Pagar a cada franquia exatamente o que o contrato manda.",
+    "e": "Fechamento aprovado para pagamento, comissões cadastradas conforme a régua, ajustes e BOs lançados no mês.",
+    "val": "Repasse certo para cada franquia",
+    "opp": "Imóvel novo ainda nasce na operação padrão a 8% e o percentual mora no imóvel, não na operação: enquanto o Sapron não muda isso, a auditoria de comissão é mensal e obrigatória.",
+    "p": [
+     {
+      "id": "10.1",
+      "t": "Auditar o fechamento dos repasses",
+      "m": "manual",
+      "ia": 0,
+      "ex": "pessoa",
+      "who": "Analista Adm/Fin",
+      "o": "Nenhum repasse de anfitrião sair errado.",
+      "e": "OK ao time de Fechamento na thread do #fechamento, ou inconsistência apontada para correção.",
+      "how": [
+       "Após o aviso de fechamento concluído: amostra de grandes operações e franquias com abatimento.",
+       "Cruzamento planilha Compilado × planilha CRC × Sapron: comissão, limpeza, despesa, reembolso, ajuste direto, taxa de franquia e abatimento.",
+       "Coordenação do BackOffice aprova. Início em até 2 h, conclusão em até 1 dia útil."
+      ],
+      "tools": [
+       "adm_fechamento",
+       "adm_compilado",
+       "adm_crc",
+       "adm_sapron"
+      ]
+     },
+     {
+      "id": "10.2",
+      "t": "Auditar a comissão do host",
+      "m": "misto",
+      "ia": 1,
+      "ex": "pessoa",
+      "who": "Analista Adm/Fin",
+      "o": "Percentual e operação de cada imóvel baterem com o contrato.",
+      "e": "Painel de achados (operação com percentual errado, imóvel sem operação, imóvel discordando da operação) e impacto do mês.",
+      "how": [
+       "Skill auditoria-comissao-franquias roda no começo do mês, antes do fechamento: Sapron × régua dos contratos (8% até jan/2026; 7% avulsa e 6% GOP a partir de fev/2026; exceções confirmadas pelo Comercial).",
+       "Divergência entre contrato e regra fica A CONFIRMAR e vai à Vivianny por Slack; correção pelo Fechamento e pelo Sapron, ajustando a operação antes de vincular imóvel."
+      ],
+      "tools": [
+       "adm_skillcom",
+       "adm_sapron",
+       "adm_revisao",
+       "adm_contratos",
+       "adm_slack"
+      ],
+      "aud": "Cada achado confirmado com o Comercial antes de virar correção."
+     },
+     {
+      "id": "10.3",
+      "t": "Lançar ajustes diretos e BOs",
+      "m": "manual",
+      "ia": 0,
+      "ex": "pessoa",
+      "who": "Analista Adm/Fin",
+      "o": "Pagar ou descontar da franquia o que não está no fechamento automático.",
+      "e": "Ajuste registrado na planilha de controle ou BO lançado no Sapron, até o último dia do mês.",
+      "how": [
+       "Ajuste (não ligado a reserva): aba Controle Ajustes Diretos e Imóvel, com aprovação do gestor.",
+       "BO (ligado a reserva): de acordo do financeiro pelo forms e lançamento em Sapron, Operacional, Hóspede, Lançamento de BOs."
+      ],
+      "tools": [
+       "adm_bos",
+       "adm_supfin",
+       "adm_sapron",
+       "adm_stays"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "MP11",
+    "v": "Acompanhar",
+    "n": "Acompanhar a taxa de franquia",
+    "o": "Saber, sem processo manual, quanto cada franquia já pagou da taxa de aquisição.",
+    "e": "Situação da quitação visível por franquia e por operação no dashboard financeiro.",
+    "val": "Repasse certo para cada franquia",
+    "opp": "Não há etapa a executar: a responsabilidade é acompanhar, responder dúvidas e apontar cadastro errado (taxa duplicada ou faltando na operação).",
+    "p": [
+     {
+      "id": "11.1",
+      "t": "Acompanhar a quitação no dashboard",
+      "m": "manual",
+      "ia": 0,
+      "ex": "sistema",
+      "who": "Sistema · Dashboard Financeiro de Franquias",
+      "o": "Ver saldo, abatimentos realizados e previsão de quitação por franquia.",
+      "e": "Dashboard atualizado, com as grandes operações consolidadas na linha da franquia.",
+      "how": [
+       "Só acompanhamento: não há etapa a executar, a responsabilidade é olhar e responder.",
+       "Total a quitar = taxa menos desconto; abatem entrada, abatimento de comissão e parcelas; só é Quitada quando todas as operações estão pagas; meses futuros são previsão pelas reservas confirmadas.",
+       "Fonte: cards 3608 e 3609 do Metabase (cadastro e lançamentos por operação)."
+      ],
+      "tools": [
+       "adm_dash",
+       "adm_metabase",
+       "adm_sapron"
+      ]
+     },
+     {
+      "id": "11.2",
+      "t": "Conferir o desconto de até 50%",
+      "m": "manual",
+      "ia": 0,
+      "ex": "pessoa",
+      "who": "Analista Adm/Fin",
+      "o": "O abatimento mensal não passar de 50% da comissão de diárias da franquia.",
+      "e": "Divergência apontada ao coordenador quando houver.",
+      "how": [
+       "Só acompanhamento: não há etapa a executar, a responsabilidade é olhar e responder.",
+       "Lembrete mensal no dia 10; Taxa de Franquia CRC × Sapron na Conferência de Fechamento.",
+       "Erros típicos: taxa cadastrada em duas operações ou não cadastrada na operação nova."
+      ],
+      "tools": [
+       "adm_bi",
+       "adm_dash",
+       "adm_sapron"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "MP12",
+    "v": "Contratos",
+    "n": "Manter os contratos atualizados",
+    "o": "Contrato refletir a realidade da franquia (CNPJ, razão social, endereço, aditivos).",
+    "e": "Aditivo assinado por todos e guardado no SULTS.",
+    "val": "Franquia rentável",
+    "opp": "Fluxo todo manual e com quatro mãos (BackOffice, Jurídico, franqueado, testemunhas). Rastrear o pedido num card com prazo tiraria o acompanhamento do Slack.",
+    "p": [
+     {
+      "id": "12.1",
+      "t": "Receber e validar a solicitação",
+      "m": "manual",
+      "ia": 0,
+      "ex": "pessoa",
+      "who": "Analista Adm/Fin",
+      "o": "Só pedir aditivo quando a alteração é real e completa.",
+      "e": "Pedido completo (dados novos conferidos no Sapron).",
+      "how": [
+       "Demanda chega pelo suporte de franquias; conferência do cadastro em Anfitrião, Editar anfitrião; ajuste de cadastro pelo #suporte-bu-hospedagem."
+      ],
+      "tools": [
+       "adm_suporte",
+       "adm_sapron"
+      ]
+     },
+     {
+      "id": "12.2",
+      "t": "Solicitar o aditivo ao Jurídico",
+      "m": "manual",
+      "ia": 0,
+      "ex": "pessoa",
+      "who": "Analista Adm/Fin",
+      "o": "Jurídico confeccionar o aditivo certo.",
+      "e": "Aditivo recebido pelo Slack.",
+      "how": [
+       "Formulário Seazone Serviços, tarefa Alteração contratual, com o tipo de alteração e o franqueado."
+      ],
+      "tools": [
+       "adm_jur",
+       "adm_slack"
+      ]
+     },
+     {
+      "id": "12.3",
+      "t": "Colher assinaturas e arquivar",
+      "m": "manual",
+      "ia": 0,
+      "ex": "pessoa",
+      "who": "Analista Adm/Fin",
+      "o": "Documento assinado por todas as partes e guardado.",
+      "e": "Aditivo assinado no Clicksign, enviado ao Jurídico e arquivado no SULTS.",
+      "how": [
+       "Ordem: franqueado assina; Iara (Diretoria de Operações) e Vivih (Coordenação de Franquias) como testemunhas."
+      ],
+      "tools": [
+       "adm_clicksign",
+       "adm_sults",
+       "adm_slack"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "MP13",
+    "v": "Medir",
+    "n": "Produzir o Score das franquias",
+    "o": "Ter todo mês uma nota confiável por franquia, porque é ela que decide quem cresce.",
+    "e": "Score publicado no ScorePulse no dia 15, com classificação por franquia.",
+    "val": "Score confiável",
+    "opp": "A cadeia planilha → Nekt → ScorePulse quebra em silêncio (cabeçalho apagado, fonte inativa). Um alerta automático de fonte parada e a saída das ocorrências por CSV manual são os dois ganhos mais claros.",
+    "p": [
+     {
+      "id": "13.1",
+      "t": "Captar os dados de cada bloco",
+      "m": "auto",
+      "ia": 0,
+      "ex": "sistema",
+      "who": "Sistema · Nekt (sync das fontes)",
+      "o": "Reunir avaliações, ocorrências, manutenções, aderência e operação local de cada franquia.",
+      "e": "Abas BD Avaliações e Indicadores Score atualizadas no ciclo.",
+      "how": [
+       "Avaliações da Stays chegam pela Nekt à aba BD Avaliações (o sync reescreve a aba inteira todo dia).",
+       "Ocorrências pontuadas vêm da planilha Indicadores Score, mantida pela Qualidade (mês do ciclo + 5 anteriores).",
+       "Despesas com erro, manutenções e aderência vêm do Sapron."
+      ],
+      "tools": [
+       "ops_stays",
+       "ops_nekt",
+       "ops_indicadores",
+       "ops_sapron",
+       "ops_planilha"
+      ],
+      "aud": "Avaliação ou ocorrência indevida só sai na origem (Nekt ou Indicadores Score). Apagar linha na planilha não segura."
+     },
+     {
+      "id": "13.2",
+      "t": "Calcular a nota e classificar",
+      "m": "auto",
+      "ia": 0,
+      "ex": "sistema",
+      "who": "Sistema · Planilha Avaliações – Score Franquias 2025",
+      "o": "Transformar os blocos em nota final e classificação.",
+      "e": "Aba Score novo com nota e classificação (Péssimo, Ruim, Regular, Bom, Excelente ou Integração).",
+      "how": [
+       "Fórmulas da aba Score novo: notas de check-in e limpeza (60% Airbnb, 40% outras OTAs, janela de 3 meses), avaliações por checkout, comunicação, operação local, aderência, bonificação por indicação e penalidade por ocorrência.",
+       "Franquia com menos de 6 meses fica em Integração; franquia em Stand by fica sem nota."
+      ],
+      "tools": [
+       "ops_planilha"
+      ]
+     },
+     {
+      "id": "13.3",
+      "t": "Publicar no ScorePulse",
+      "m": "misto",
+      "ia": 0,
+      "ex": "sistema",
+      "who": "Sistema · Nekt → ScorePulse",
+      "o": "Levar o score à franquia e aos sistemas que dependem dele (Stop, KPIs, GeoCluster).",
+      "e": "ScorePulse atualizado no dia 15 ou no primeiro dia útil seguinte.",
+      "how": [
+       "Snapshot do mês colado na aba BD Meses da planilha BD Score 4.0.",
+       "Fonte da Nekt lê a aba (5 vezes ao dia) e grava a tabela que o ScorePulse espelha no sync de scores."
+      ],
+      "tools": [
+       "ops_bdscore",
+       "ops_nekt",
+       "ops_scorepulse"
+      ],
+      "aud": "Conferir a fonte da Nekt a cada ciclo: toda aba precisa de linha 1 preenchida; após 3 falhas a fonte desliga sozinha e o app para de atualizar."
+     },
+     {
+      "id": "13.4",
+      "t": "Auditar o score e tratar contestações",
+      "m": "manual",
+      "ia": 1,
+      "ex": "pessoa",
+      "who": "Analista Adm/Fin",
+      "o": "Garantir que a nota reflete a realidade antes de ela decidir um stop.",
+      "e": "Ajuste aplicado ou negado, com rastreio do motivo.",
+      "how": [
+       "Pedidos de franquia ou gestor (tirar avaliação, tirar ocorrência, nota errada) são diagnosticados com o Claude nas tabelas da Nekt e do Sapron.",
+       "Avaliação removida pelo Airbnb: exclusão na origem Nekt. Ocorrência: reclassificação na Indicadores Score pela Qualidade. Ajuste autorizado: na BD Meses.",
+       "Frente herdada do David em 26/09/2026."
+      ],
+      "tools": [
+       "ops_claude",
+       "ops_nekt",
+       "ops_scorepulse",
+       "ops_bdscore"
+      ]
+     },
+     {
+      "id": "13.5",
+      "t": "Comunicar o score",
+      "m": "manual",
+      "ia": 0,
+      "ex": "pessoa",
+      "who": "Analista Adm/Fin",
+      "o": "Franquias e gestores saberem a nota e a classificação do mês.",
+      "e": "Aviso Score Franquias no #avisos-operação e nota visível no ScorePulse.",
+      "how": [
+       "Aviso no canal entra na aba Avisos do Suporte Unificado.",
+       "A franquia consulta a própria nota e, desde o processo v2, o próprio stop no ScorePulse."
+      ],
+      "tools": [
+       "ops_slack",
+       "ops_suporte",
+       "ops_scorepulse"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "MP14",
+    "v": "Proteger",
+    "n": "Aplicar o Stop de Crescimento",
+    "o": "Impedir que franquia sem condição continue recebendo imóveis que não vai conseguir operar.",
+    "e": "Stop aplicado no app com motivo, abrangência, autor e comunicado à franquia.",
+    "val": "Franquia certa recebe o imóvel",
+    "opp": "A régua de manutenção em aberto está pronta e desligada (ligar hoje pararia 8 franquias): falta decisão. A pergunta mensal à franquia ainda não sai pelo Seazone Host.",
+    "p": [
+     {
+      "id": "14.1",
+      "t": "Aplicar stop automático pelo score",
+      "m": "auto",
+      "ia": 0,
+      "ex": "sistema",
+      "who": "Sistema · Rodada do Stop (GitHub Actions)",
+      "o": "Parar sozinho quem caiu de classificação, sem depender de ninguém lembrar.",
+      "e": "Stop total (Ruim ou Péssimo) ou exceto mesmo prédio (3 meses em Regular) aplicado na rodada.",
+      "how": [
+       "Rodada às 9h do dia seguinte à publicação do score; o agendamento roda todo dia e a rota decide se é o dia.",
+       "Gatilho é a classificação, não a nota. Integração e franquia com menos de 6 imóveis ficam de fora.",
+       "Franquia única no polígono não é parada pela rodada: vai para decisão à mão.",
+       "O que a rodada aplicou ela também desfaz quando a franquia recupera; stop aplicado por pessoa não é mexido."
+      ],
+      "tools": [
+       "ops_appstop",
+       "ops_actions",
+       "ops_scorepulse",
+       "ops_geo"
+      ]
+     },
+     {
+      "id": "14.2",
+      "t": "Aplicar stop manual",
+      "m": "manual",
+      "ia": 0,
+      "ex": "pessoa",
+      "who": "Gestor regional e gerências",
+      "o": "Parar por qualidade, pedido da franquia, tamanho, grande operação ou distrato.",
+      "e": "Stop registrado no app com anotação interna e comunicado à franquia.",
+      "how": [
+       "Qualidade: gestor regional pede e uma gerência decide em 2 dias úteis, senão caduca; gerências aplicam direto.",
+       "Pedido da franquia: chega pelo suporte de franquias; gestor regional aplica.",
+       "Tamanho: a rodada sugere (40+ imóveis e salto de 5 ou mais acima do próprio ritmo); Gerência de BackOffice decide.",
+       "Grande operação (Comercial) e distrato (quem abre o distrato) são permanentes e ficam fora da rodada."
+      ],
+      "tools": [
+       "ops_appstop",
+       "ops_suporte",
+       "ops_processo"
+      ]
+     },
+     {
+      "id": "14.3",
+      "t": "Comunicar aplicação e remoção",
+      "m": "auto",
+      "ia": 0,
+      "ex": "sistema",
+      "who": "Sistema · App de Stop de Crescimento",
+      "o": "Ninguém ser pego de surpresa, nem a franquia.",
+      "e": "Post no #avisos-operação marcando quem decide, e stop visível no ScorePulse com o comunicado.",
+      "how": [
+       "O bot do app posta no canal a cada aplicação, remoção e resumo da rodada.",
+       "A franquia vê abrangência, data e motivo no ScorePulse. Grande operação e distrato não aparecem para ela; stop aguardando aprovação não é comunicado."
+      ],
+      "tools": [
+       "ops_appstop",
+       "ops_slack",
+       "ops_scorepulse"
+      ]
+     },
+     {
+      "id": "14.4",
+      "t": "Monitorar franquias sem receber imóveis",
+      "m": "auto",
+      "ia": 0,
+      "ex": "sistema",
+      "who": "Sistema · Bot sem receber imóveis",
+      "o": "Enxergar quem está parado há mais de 60 dias sem estar em stop.",
+      "e": "Aviso semanal Franquias sem receber imóveis no #avisos-operação, com detalhe por faixa na thread.",
+      "how": [
+       "Toda segunda às 9h o bot lê na Nekt a última entrada de imóvel novo por franquia, exclui quem está em stop e quem tem zero imóvel, e classifica: crítico (+180 dias), atenção (90 a 180) e monitorar (60 a 90).",
+       "Posta via relay do Slack; o aviso vira card na aba Avisos do Suporte Unificado.",
+       "Bot criado e mantido pela analista Adm/Fin; regra de dias validada em 09/07/2026."
+      ],
+      "tools": [
+       "ops_bot",
+       "ops_nekt",
+       "ops_slack",
+       "ops_suporte",
+       "ops_github"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "MP15",
+    "v": "Revisar",
+    "n": "Revisar e encerrar o stop",
+    "o": "Nenhum stop ficar esquecido: todo mês alguém confirma, e caso parado vira decisão.",
+    "e": "Cada stop com resposta na rodada, decidido antes de 90 dias e removido quando a franquia recupera.",
+    "val": "Rede cresce com qualidade",
+    "opp": "A confirmação mensal ainda depende do consultor levar a pergunta; o silêncio mantém o stop por desenho, mas a meta de zero stop acima de 90 dias só fecha com as gerências respondendo às cobranças.",
+    "p": [
+     {
+      "id": "15.1",
+      "t": "Confirmar os stops na rodada mensal",
+      "m": "misto",
+      "ia": 0,
+      "ex": "pessoa",
+      "who": "Consultor regional e BackOffice",
+      "o": "Cada stop ativo ter alguém dizendo se continua.",
+      "e": "Resposta continua ou remover em 7 dias corridos, por stop.",
+      "how": [
+       "A rodada lista quem precisa confirmar: pedido da franquia, o consultor da região pergunta à franquia; qualidade, quem aplicou; tamanho, o BackOffice; grande operação, a Gerência de Relacionamento a cada 90 dias.",
+       "Sem resposta o stop fica e volta no mês seguinte como sem resposta."
+      ],
+      "tools": [
+       "ops_appstop",
+       "ops_slack",
+       "ops_host"
+      ],
+      "aud": "BackOffice confere a lista da rodada no mesmo dia e cobra quem não respondeu."
+     },
+     {
+      "id": "15.2",
+      "t": "Decidir stops acima de 90 dias",
+      "m": "manual",
+      "ia": 0,
+      "ex": "pessoa",
+      "who": "Gerências de Relacionamento e de BackOffice",
+      "o": "Caso parado há três rodadas virar decisão: manter, remover ou reduzir base e distrato.",
+      "e": "Decisão registrada no histórico do stop.",
+      "how": [
+       "A rodada cobra: primeira à gerência dona do assunto (Relacionamento para qualidade, pedido e GOP; BackOffice para tamanho e sem motivo), segunda cruza para a outra, da terceira em diante as duas toda semana.",
+       "Redução de base roda pela migração de franquias, conduzida pelo Relacionamento; o stop permanece enquanto a migração corre."
+      ],
+      "tools": [
+       "ops_appstop",
+       "ops_slack"
+      ]
+     },
+     {
+      "id": "15.3",
+      "t": "Remover o stop",
+      "m": "manual",
+      "ia": 0,
+      "ex": "pessoa",
+      "who": "BackOffice e gerências",
+      "o": "Soltar a franquia que recuperou, com a alçada certa.",
+      "e": "Stop encerrado e comunicado no #avisos-operação.",
+      "how": [
+       "BackOffice remove qualidade, pedido da franquia e tamanho; pedido do gestor regional passa por uma gerência em 2 dias úteis (o silêncio não remove).",
+       "Grande operação e distrato só saem por decisão de gerência; distrato encerra sozinho quando a franquia é desativada no Sapron."
+      ],
+      "tools": [
+       "ops_appstop",
+       "ops_slack",
+       "ops_sapron"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "MP16",
+    "v": "Detectar",
+    "n": "Encontrar imóveis e franquias críticos",
+    "o": "Todo dia saber, sem ninguém procurar, qual imóvel e qual franquia saíram do padrão de qualidade.",
+    "e": "Fila de imóveis críticos, sinais de franquia e diagnóstico por franquia publicados às 11h.",
+    "val": "Crítico detectado no dia",
+    "opp": "A detecção é toda do robô. O ganho pendente é a prioridade da fila: hoje só Spot e GOps sobem; falta pesar reserva próxima, calendário livre para a manutenção, gravidade do item e bloqueio acima de 30 dias.",
+    "p": [
+     {
+      "id": "16.1",
+      "t": "Ler as fontes do dia",
+      "m": "auto",
+      "ia": 0,
+      "ex": "sistema",
+      "who": "Sistema · Robô Derek",
+      "o": "Reunir nota e avaliações do Airbnb, carteira ativa, reservas, manutenções abertas, Score, stop e ocorrências.",
+      "e": "Dados do dia gravados na Central (só números; nunca nome ou comentário de hóspede).",
+      "how": [
+       "Robô roda às 11h, depois da coleta do Airbnb pelo Nekt; token de leitura limitado a 4 tabelas.",
+       "ScorePulse pela API de leitura; ocorrências pela API da Central de Ocorrências; manutenções direto no Sapron (aguardando aprovação não conta).",
+       "Se o Nekt devolver menos de 1.000 imóveis ativos, o robô não publica e mantém o dia anterior."
+      ],
+      "tools": [
+       "uti_robo",
+       "uti_nekt",
+       "uti_sapron",
+       "uti_scorepulse",
+       "uti_ocorr"
+      ],
+      "aud": "Aviso vermelho no topo da Central quando o robô não roda: avisar a Carol."
+     },
+     {
+      "id": "16.2",
+      "t": "Classificar imóveis críticos e montar a fila",
+      "m": "auto",
+      "ia": 0,
+      "ex": "sistema",
+      "who": "Sistema · Robô Derek",
+      "o": "Separar quem é caso real de quem teve uma queda de um dia.",
+      "e": "Fila ordenada: reincidência, franquia em UTI, prédio GOps/Spot, reserva em 14 dias, há mais tempo crítico.",
+      "how": [
+       "Crítico = nota abaixo de 4,6 com 3 avaliações ou mais, em duas leituras seguidas. Anúncio recriado fica como sem nota.",
+       "Prédio GOps/Spot com 1 unidade crítica ou mais vira um card do prédio, que ocupa 1 vaga.",
+       "Universo: imóveis ativos de franquias no Sapron; operação própria e A Definir ficam fora."
+      ],
+      "tools": [
+       "uti_robo",
+       "uti_central"
+      ]
+     },
+     {
+      "id": "16.3",
+      "t": "Abrir sinais e diagnosticar franquias",
+      "m": "auto",
+      "ia": 0,
+      "ex": "sistema",
+      "who": "Sistema · Robô Derek",
+      "o": "Apontar a franquia com problema e os planos de ação que o problema pede.",
+      "e": "Card em Sinal com os motivos e os planos sugeridos (Manutenção, Ocorrências, Avaliações, Anúncios, Estrutura, Prédio).",
+      "how": [
+       "Sinais: Score Ruim, queda de 10+ pontos, 30%+ da carteira crítica (10+ imóveis), 2+ gravíssimas em 90 dias ou stop total por qualidade. Integração e Stand by ficam fora.",
+       "O plano de Manutenção só liga com manutenção aberta no Sapron; as métricas do dia da decisão viram a linha de base das metas.",
+       "A UTI de dentro do ScorePulse não é usada."
+      ],
+      "tools": [
+       "uti_robo",
+       "uti_scorepulse",
+       "uti_ocorr",
+       "uti_central"
+      ]
+     },
+     {
+      "id": "16.4",
+      "t": "Triagem automática dos imóveis",
+      "m": "misto",
+      "ia": 1,
+      "ex": "sistema",
+      "who": "Sistema · Robô Derek",
+      "o": "Escolher o protocolo certo sem alguém abrir ficha por ficha.",
+      "e": "Protocolo aplicado pelo robô; na Triagem ficam só os casos Precisa de você.",
+      "how": [
+       "A cada 15 minutos o robô confere se é caso real, junta evidências (notas por item, manutenções, ocorrências de 90 dias, reservas, resumo da Qualidade) e escolhe pela ordem: manutenção aberta → ocorrência grave em 30 dias → pior nota por item → menos de 6 avaliações → visita.",
+       "A leitura da IA do app da Qualidade (motivo, problemas atuais, ação recomendada) entra na ficha como apoio.",
+       "Modo automático ligado em 05/10/2026."
+      ],
+      "tools": [
+       "uti_robo",
+       "uti_qualidade",
+       "uti_central"
+      ],
+      "aud": "Precisa de você = sem dados do dia ou sugestão ambígua; a analista escolhe e escreve o motivo."
+     }
+    ]
+   },
+   {
+    "id": "MP17",
+    "v": "Tratar",
+    "n": "UTI de Imóveis: do protocolo à alta",
+    "o": "Cada imóvel crítico ter dono, prazo e evidência de correção até a nota se sustentar.",
+    "e": "Imóvel tratado pelo protocolo do motivo e com alta confirmada depois de 30 dias com nota 4,6 ou mais.",
+    "val": "Time certo age no prazo",
+    "opp": "As integrações já andam os passos sozinhas (hub, Sapron, Qualidade). O gargalo é humano: 49 dos 74 casos em tratamento estão no mesmo passo há 7 dias ou mais. A cobrança diária por responsável é o que destrava.",
+    "p": [
+     {
+      "id": "17.1",
+      "t": "Resolver os casos Precisa de você",
+      "m": "manual",
+      "ia": 1,
+      "ex": "pessoa",
+      "who": "Analista Adm/Fin",
+      "o": "Nenhum imóvel parado na Triagem por falta de decisão.",
+      "e": "Triagem confirmada (ou descartada com motivo) no mesmo dia.",
+      "how": [
+       "Abrir a ficha, conferir a sugestão e as evidências, clicar Confirmar triagem. Texto só quando troco a sugestão ou descarto.",
+       "Descartado volta à fila só depois de 30 dias, se continuar crítico."
+      ],
+      "tools": [
+       "uti_central"
+      ]
+     },
+     {
+      "id": "17.2",
+      "t": "Rodar os protocolos pelos times",
+      "m": "misto",
+      "ia": 0,
+      "ex": "sistema",
+      "who": "Donos dos protocolos (Manutenção, Consultoria, Qualidade, Anúncios)",
+      "o": "O dono de cada protocolo executar os passos e o sistema registrar sozinho.",
+      "e": "Passos concluídos pelo botão ✓ ou pela integração (card de manutenção, visita no hub, caso na Qualidade).",
+      "how": [
+       "Manutenção (Vinicius): card no Sapron ganha a tag uti ou é aberto; o status anda os 4 passos. Em simulação até o 1º caso real.",
+       "Comunicação, Visita e Prédio (consultor da UF: Nordeste Clara, Centro-Oeste e Sudeste Thiago, Sul Hércules e Raphael): o hub cria a sugestão de visita com tag UTI e a Central lê o status a cada 15 min.",
+       "Falta de avaliações (Victória): o caso abre no app da Qualidade e a etapa de lá anda o passo aqui.",
+       "Erro de anúncio (Larissa → Anúncios) e Gerência (Vivianny): manuais."
+      ],
+      "tools": [
+       "uti_central",
+       "uti_sapron",
+       "uti_hub",
+       "uti_qualidade"
+      ]
+     },
+     {
+      "id": "17.3",
+      "t": "Cobrar passo e contato atrasados",
+      "m": "manual",
+      "ia": 0,
+      "ex": "pessoa",
+      "who": "Analista Adm/Fin",
+      "o": "Nenhum card vermelho (passo fora do prazo) ou laranja (sem contato há 7 dias) sem alguém cobrado.",
+      "e": "Cobrança feita ao dono no Slack e registrada no card com ✎ contato.",
+      "how": [
+       "Filtros Passo atrasado e Contato atrasado no Kanban de Imóveis, todo dia depois das 11h.",
+       "Spot primeiro, depois GOps, depois os demais: Spot com desvio é urgente.",
+       "Visita planejada no hub e não feita volta como aviso na Central: cobrar o consultor."
+      ],
+      "tools": [
+       "uti_central",
+       "uti_slack",
+       "uti_hub"
+      ],
+      "aud": "Resumo semanal por responsável mostra quem acumula atraso."
+     },
+     {
+      "id": "17.4",
+      "t": "Prédios GOps/Spot",
+      "m": "misto",
+      "ia": 0,
+      "ex": "sistema",
+      "who": "Sistema · Central da UTI",
+      "o": "Unidade que destoa do próprio prédio ser tratada sem deslocar consultor à toa.",
+      "e": "Dossiê do prédio (unidades críticas × média das saudáveis) e um card por unidade crítica, sem ocupar vaga.",
+      "how": [
+       "Primeiro passo é a conversa da coordenação da Consultoria com a franquia (configuração da Nane); visita só quando a conversa não resolve.",
+       "Prédio fecha quando não sobra unidade crítica nem caso de unidade aberto."
+      ],
+      "tools": [
+       "uti_central",
+       "uti_hub"
+      ]
+     },
+     {
+      "id": "17.5",
+      "t": "Observação e alta",
+      "m": "misto",
+      "ia": 0,
+      "ex": "sistema",
+      "who": "Sistema · Central da UTI",
+      "o": "Só dar alta quando a nota se sustentar.",
+      "e": "Alta confirmada após 30 dias seguidos com nota 4,6 ou mais (falta de avaliações: 1 avaliação nova acima de 4,8).",
+      "how": [
+       "O robô acompanha a nota todo dia; queda na observação volta para a triagem sozinha.",
+       "Alta a confirmar: a analista confere a ficha e clica Confirmar alta ou Não recuperou.",
+       "2 protocolos sem recuperar vão para a Gerência decidir."
+      ],
+      "tools": [
+       "uti_central",
+       "uti_robo"
+      ]
+     },
+     {
+      "id": "17.6",
+      "t": "Kanban Conta 2 (recriação no Airbnb)",
+      "m": "misto",
+      "ia": 0,
+      "ex": "sistema",
+      "who": "Sistema · Central da UTI",
+      "o": "Imóvel cuja nota nunca passou de 4,6 sair da UTI e ser recriado na Conta 2.",
+      "e": "Pedido de recriação no board de Anúncios e acompanhamento do anúncio novo (Saudável com 3+ avaliações acima de 4,6).",
+      "how": [
+       "Elegível = nunca passou de 4,6 no histórico e anúncio atual crítico; iminência = histórico ruim ainda sem 3 avaliações. Limite de 100 na Conta 2 por enquanto.",
+       "Reserva futura vira task force para pedir avaliação aos hóspedes.",
+       "Pedido automático aguarda o endpoint do time de Anúncios; até lá acompanho os pedidos na semana."
+      ],
+      "tools": [
+       "uti_central",
+       "uti_anuncios",
+       "uti_nekt"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "MP18",
+    "v": "Recuperar",
+    "n": "UTI de Franquias: da Pré-UTI à alta ou ao distrato",
+    "o": "Franquia com problema ser avisada, ter 7 dias para corrigir e, se não corrigir, rodar um plano de 30 dias com metas antes de qualquer distrato.",
+    "e": "Franquia recuperada (30 dias sem alerta) ou distrato decidido pelas aprovadoras com histórico completo.",
+    "val": "Franquia recuperada em vez de distrato",
+    "opp": "Desde 13/10 a Pré-UTI e os e-mails são automáticos. O que ainda depende de pessoa e trava: a Decisão (6 casos parados desde 25/09) e a call de alinhamento. Stop e Captação ligados à UTI ainda aguardam o app de stop.",
+    "p": [
+     {
+      "id": "18.1",
+      "t": "Pré-UTI de 7 dias",
+      "m": "auto",
+      "ia": 0,
+      "ex": "sistema",
+      "who": "Sistema · Robô Derek",
+      "o": "Dar à franquia a chance de resolver antes de ocupar vaga ou ligar o stop.",
+      "e": "E-mail de Pré-UTI enviado no D0 e entregas fechando sozinhas pelos dados; no D7 sem tudo, vai para a Decisão.",
+      "how": [
+       "O robô escolhe o plano de maior peso do diagnóstico e acompanha só as entregas dele (ex.: manutenção fechada no Sapron conta sozinha).",
+       "Caso grave (stop total por qualidade) ou reincidente pula a Pré-UTI.",
+       "Alerta que some dos dados antes do D7 encerra sem UTI; se voltar em 30 dias, vai direto para a Decisão."
+      ],
+      "tools": [
+       "uti_robo",
+       "uti_email",
+       "uti_central"
+      ]
+     },
+     {
+      "id": "18.2",
+      "t": "Decisão de entrada",
+      "m": "manual",
+      "ia": 0,
+      "ex": "pessoa",
+      "who": "Aprovadoras (Carol, Vivianny, Iara, Rayanne)",
+      "o": "Entrada na UTI e distrato terem aprovação de quem tem alçada.",
+      "e": "Decisão registrada em 2 dias: entra (com os planos), mais 7 dias de Pré-UTI (1 vez), só observar 30 dias, ou distrato.",
+      "how": [
+       "Aprovam: Carol, Vivianny, Iara ou Rayanne. Aprovar não pede texto; negar e distrato pedem motivo.",
+       "Máximo de 5 franquias em Comunicação + Planos + Avaliação; aprovada sem vaga espera e entra sozinha.",
+       "A analista cobra a decisão quando o prazo vence."
+      ],
+      "tools": [
+       "uti_central",
+       "uti_slack"
+      ],
+      "aud": "Pedidos de entrada ou saída pelo card (⋯ Pedir saída) ficam no histórico com quem aprovou ou negou."
+     },
+     {
+      "id": "18.3",
+      "t": "Comunicar a franquia",
+      "m": "misto",
+      "ia": 0,
+      "ex": "sistema",
+      "who": "Gerência de Relacionamento e Consultoria Regional",
+      "o": "A franquia saber por que entrou, o que vai ser trabalhado e até quando.",
+      "e": "E-mail de entrada (automático, D0) e call de alinhamento de 30 a 45 min até o D3; em 3 dias o plano começa com ou sem a call.",
+      "how": [
+       "E-mail sai pela conta anfitrioes@ com os motivos, os planos, as metas e as primeiras entregas; cópia para Vivianny e para a analista Adm/Fin.",
+       "A call é da Gerência (Vivianny) com a Consultoria Regional; o resumo é registrado no card.",
+       "Stop de crescimento é pedido ao app no mesmo dia (validação de gerência); Captação marca a praça."
+      ],
+      "tools": [
+       "uti_email",
+       "uti_central",
+       "uti_hub",
+       "uti_appstop"
+      ],
+      "aud": "Conferir se a call aconteceu no prazo; sem dona presente (férias), escalar para Carol ou Rayanne."
+     },
+     {
+      "id": "18.4",
+      "t": "Planos de ação de 30 dias",
+      "m": "misto",
+      "ia": 0,
+      "ex": "pessoa",
+      "who": "Donos dos planos de ação",
+      "o": "Cada plano ter dono, passos datados e entregas do franqueado com evidência.",
+      "e": "Passos D0 a D21 concluídos e check-ins em D7, D14, D21 e D30.",
+      "how": [
+       "Manutenção (Vinicius): urgentes em 48h, antigas em 10 dias, preventiva no D14. Ocorrências (Victória): padrão enviado no D1, plano da franquia no D3, conferência presencial no D14.",
+       "Avaliações (Victória): lista de problemas no D2, evidências no D9, geração de avaliações. Anúncios (Larissa): validação no D3, chamados no D4, publicação no D7.",
+       "Estrutura (Vivianny): acordo assinado no D5. Prédio (Vivianny): vistoria no D5, padrão único no D7, correção em lote no D21.",
+       "Escalada no atraso: Vivianny liga no mesmo dia; segunda falha vai à Diretoria."
+      ],
+      "tools": [
+       "uti_central",
+       "uti_sapron",
+       "uti_hub",
+       "uti_qualidade"
+      ],
+      "aud": "Contato a cada 7 dias (✎ contato) é obrigatório na Execução; a analista cobra os passos vencidos."
+     },
+     {
+      "id": "18.5",
+      "t": "Avaliação, prorrogação e saída",
+      "m": "misto",
+      "ia": 0,
+      "ex": "sistema",
+      "who": "Sistema · Robô Derek",
+      "o": "Fechar o ciclo com as metas comparadas, não com opinião.",
+      "e": "Metas antes × hoje: atingida (Observação de 30 dias → Recuperada), prorrogação única de 30 dias ou distrato pelas aprovadoras.",
+      "how": [
+       "O robô compara as métricas do dia da decisão com as do D30 e manda o e-mail de prorrogação ou de saída.",
+       "Observação de 30 dias sem alerta = recuperada; alerta de volta = nova Decisão.",
+       "Franquia nova que herda imóveis não herda a UTI da franquia que saiu; os imóveis seguem na UTI de Imóveis."
+      ],
+      "tools": [
+       "uti_robo",
+       "uti_email",
+       "uti_central"
+      ]
+     }
+    ]
+   }
+  ]
+ }
+];
+
+const LANES = [
+ {
+  "cls": "ges",
+  "lab": "Gestão",
+  "groups": [
+   {
+    "id": "MP19",
+    "n": "Manter o padrão",
+    "o": "Régua, regras e protocolos escritos e iguais para todas as franquias, nas duas trilhas.",
+    "p": [
+     {
+      "id": "19.1",
+      "t": "Padronizar a limpeza extra",
+      "m": "manual",
+      "ia": 0,
+      "ex": "pessoa",
+      "who": "Analista de Danos",
+      "o": "Limitar e qualificar o pedido de limpeza extra.",
+      "e": "Pedido até 50% da taxa de limpeza, nos casos passíveis.",
+      "how": [
+       "Passíveis: manchas de difícil remoção, sujeira de pet, odor de tabaco, festa comprovada. Louça não.",
+       "Segue as mesmas regras dos demais danos."
+      ],
+      "tools": [
+       "dn_sapron",
+       "cv_limp"
+      ]
+     },
+     {
+      "id": "19.2",
+      "t": "Base de conhecimento dos esdrúxulos",
+      "m": "manual",
+      "ia": 0,
+      "ex": "pessoa",
+      "who": "Analista de Danos",
+      "o": "Casos raros resolvidos uma vez servem de régua.",
+      "e": "Resolução registrada.",
+      "how": [
+       "Canvas Base de Conhecimento - BackOffice - Franquias - Danos."
+      ],
+      "tools": [
+       "dn_slack",
+       "cv_val"
+      ]
+     },
+     {
+      "id": "19.3",
+      "t": "Régua da taxa de limpeza",
+      "m": "manual",
+      "ia": 1,
+      "ex": "pessoa",
+      "who": "Analista Adm/Fin",
+      "o": "Parâmetros da calculadora e regras de decisão coerentes.",
+      "e": "Régua publicada na calculadora e na skill.",
+      "how": [
+       "Parâmetros (lavanderia, mão de obra, enxoval, cluster) na calculadora; regras de decisão na skill; alçada final da diretoria."
+      ],
+      "tools": [
+       "adm_calc",
+       "adm_skilltaxa",
+       "adm_claude"
+      ]
+     },
+     {
+      "id": "19.4",
+      "t": "Régua da comissão por contrato",
+      "m": "manual",
+      "ia": 1,
+      "ex": "pessoa",
+      "who": "Analista Adm/Fin",
+      "o": "Percentual esperado por franquia e operação, por versão de contrato.",
+      "e": "Planilha de contratos e skill atualizadas a cada confirmação do Comercial.",
+      "how": [
+       "Versões V1.0 a V1.6 e confirmações caso a caso; quem decide a divergência é a Vivianny."
+      ],
+      "tools": [
+       "adm_contratos",
+       "adm_skillcom"
+      ]
+     },
+     {
+      "id": "19.5",
+      "t": "Regras da IA de despesas",
+      "m": "manual",
+      "ia": 1,
+      "ex": "pessoa",
+      "who": "Analista Adm/Fin",
+      "o": "A regra da IA evoluir com o que a auditoria encontra.",
+      "e": "Regra ajustada pelo Sapron e revalidada.",
+      "how": [
+       "Oportunidades e erros registrados na auditoria viram pedido de ajuste ao Sapron."
+      ],
+      "tools": [
+       "adm_slackdesp",
+       "adm_despesas"
+      ]
+     },
+     {
+      "id": "19.6",
+      "t": "Manter o processo de stop (v2)",
+      "m": "manual",
+      "ia": 1,
+      "ex": "pessoa",
+      "who": "Coordenação do BackOffice",
+      "o": "Alçadas, prazos, motivos e abrangências num lugar só.",
+      "e": "Processo v2 e app alinhados.",
+      "how": [
+       "Texto do processo é do David (validado em 17/09/2026); regra nova nasce no código do app e no documento, nunca em um só."
+      ],
+      "tools": [
+       "ops_processo",
+       "ops_appstop",
+       "ops_claude"
+      ]
+     },
+     {
+      "id": "19.7",
+      "t": "Manter a régua do score",
+      "m": "manual",
+      "ia": 0,
+      "ex": "pessoa",
+      "who": "Coordenação do BackOffice e diretoria",
+      "o": "Pesos, blocos, faixas e exceções (Integração, Stand by) coerentes.",
+      "e": "Régua documentada e aplicada na planilha.",
+      "how": [
+       "Mudanças de peso ou faixa passam pela diretoria e entram na planilha Score novo."
+      ],
+      "tools": [
+       "ops_planilha",
+       "ops_scorepulse"
+      ]
+     },
+     {
+      "id": "19.8",
+      "t": "Comunicar as regras",
+      "m": "manual",
+      "ia": 0,
+      "ex": "pessoa",
+      "who": "Analista Adm/Fin",
+      "o": "Franquia e gestor regional saberem como o score e o stop funcionam.",
+      "e": "Comunicado registrado.",
+      "how": [
+       "Treinamentos e comunicados às franquias e aos gestores regionais."
+      ],
+      "tools": [
+       "ops_slack",
+       "ops_host"
+      ]
+     },
+     {
+      "id": "19.9",
+      "t": "Régua e protocolos da Central",
+      "m": "manual",
+      "ia": 1,
+      "ex": "pessoa",
+      "who": "Carol (dona da Central da UTI)",
+      "o": "Critérios de entrada, ordem da triagem, passos e prazos de cada protocolo e plano.",
+      "e": "Aba Regras e fontes e protocolos no ar, com dono validando cada um.",
+      "how": [
+       "Dona da Central é a Carol; mudanças de régua passam por ela e pela Nane (automações da Consultoria).",
+       "Rascunho dos protocolos em validação com cada dono (Vinicius, Victória, Larissa, Vivianny)."
+      ],
+      "tools": [
+       "uti_central",
+       "uti_canvas",
+       "uti_artefato"
+      ]
+     },
+     {
+      "id": "19.10",
+      "t": "Propor melhorias do processo",
+      "m": "manual",
+      "ia": 1,
+      "ex": "pessoa",
+      "who": "Analista Adm/Fin",
+      "o": "O que trava na operação virar ajuste de regra ou de automação.",
+      "e": "Sugestões enviadas à Carol com evidência do endpoint.",
+      "how": [
+       "Pedido da Carol no handover: passar canvas, artefato e endpoint pelo Claude e devolver sugestões.",
+       "Pendentes: prioridade da fila por reserva e gravidade, reincidência de sinais, resposta às 5 perguntas abertas do artefato."
+      ],
+      "tools": [
+       "uti_claude",
+       "uti_endpoint",
+       "uti_artefato"
+      ]
+     },
+     {
+      "id": "19.11",
+      "t": "Comunicar as regras à rede",
+      "m": "manual",
+      "ia": 0,
+      "ex": "pessoa",
+      "who": "Analista Adm/Fin",
+      "o": "Franquia e consultor saberem como se entra, o que se cobra e como se sai.",
+      "e": "Regras explicadas nos e-mails automáticos e nos treinamentos da Consultoria.",
+      "how": [
+       "Os e-mails da Central já carregam motivos, metas e prazos; o reforço é pela Consultoria Regional."
+      ],
+      "tools": [
+       "uti_email",
+       "uti_hub"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "MP20",
+    "n": "Medir resultados",
+    "o": "Saber se custo, repasse, recuperação de danos e qualidade da rede estão certos, e auditar processo e ferramenta.",
+    "p": [
+     {
+      "id": "20.1",
+      "t": "KPIs diários do setor Financeiro",
+      "m": "misto",
+      "ia": 1,
+      "ex": "agente",
+      "who": "Agente (Claude)",
+      "o": "26 KPIs (despesas lançadas e aprovadas, acima de R$ 300, taxa de limpeza aberta, aprovada e recusada, itens mínimos) preenchidos de D-1.",
+      "e": "Dia lançado no kpi-system com tabela de conferência.",
+      "how": [
+       "Skill kpis-franquias calcula da fonte viva (Sapron e Suporte Unificado); a analista confere e grava."
+      ],
+      "tools": [
+       "adm_skillkpi",
+       "adm_kpi",
+       "adm_claude"
+      ],
+      "aud": "Tabela de conferência antes de gravar."
+     },
+     {
+      "id": "20.2",
+      "t": "Dashboard financeiro de franquias",
+      "m": "misto",
+      "ia": 0,
+      "ex": "sistema",
+      "who": "Sistema · Dashboard Financeiro de Franquias",
+      "o": "Taxa de franquia, despesas, repasses de fechamento e compra de enxoval num painel só.",
+      "e": "Painel publicado e atualizado.",
+      "how": [
+       "Pipeline rodado pela analista (Metabase, MCP Sapron, Nekt) e publicado por PR."
+      ],
+      "tools": [
+       "adm_dash",
+       "adm_metabase",
+       "adm_sapron",
+       "adm_nekt"
+      ],
+      "aud": "Checks de mapa (categorias e status) antes de publicar."
+     },
+     {
+      "id": "20.3",
+      "t": "Análises sob demanda",
+      "m": "manual",
+      "ia": 1,
+      "ex": "pessoa",
+      "who": "Analista Adm/Fin",
+      "o": "Responder perguntas da liderança com dados (EasyCover, impacto de comissão, faixas de ajuste).",
+      "e": "Relatório ou painel entregue.",
+      "how": [
+       "Análises com o Claude sobre Sapron, Nekt e Metabase."
+      ],
+      "tools": [
+       "adm_claude",
+       "adm_nekt",
+       "adm_sapron"
+      ]
+     },
+     {
+      "id": "20.4",
+      "t": "KPIs diários do setor OPS",
+      "m": "misto",
+      "ia": 1,
+      "ex": "agente",
+      "who": "Agente (Claude)",
+      "o": "45 KPIs de score por faixa, porte, suporte e stop (524, 525, 526) preenchidos de D-1.",
+      "e": "Dia lançado no kpi-system com tabela de conferência.",
+      "how": [
+       "Skill kpis-franquias calcula cada valor da fonte viva (ScorePulse, Nekt, Sapron, Suporte); a analista confere e grava. Nunca inventa valor nem causa."
+      ],
+      "tools": [
+       "ops_skillkpi",
+       "ops_kpi",
+       "ops_claude"
+      ],
+      "aud": "Tabela de conferência antes de gravar; dias fora da meta recebem comentário com a causa."
+     },
+     {
+      "id": "20.5",
+      "t": "Painéis do ScorePulse e do app de stop",
+      "m": "auto",
+      "ia": 0,
+      "ex": "sistema",
+      "who": "Sistema · ScorePulse",
+      "o": "Score por franquia, stops por motivo e abrangência, stops acima de 90 dias.",
+      "e": "Painéis atualizados (meta: zero stop sem decisão acima de 90 dias).",
+      "how": [
+       "ScorePulse e app de stop leem as mesmas fontes da rodada."
+      ],
+      "tools": [
+       "ops_scorepulse",
+       "ops_appstop"
+      ]
+     },
+     {
+      "id": "20.6",
+      "t": "Análises sob demanda",
+      "m": "manual",
+      "ia": 1,
+      "ex": "pessoa",
+      "who": "Analista Adm/Fin",
+      "o": "Responder perguntas da liderança com dados (por que a franquia X não recebe, impacto do score no GeoCluster).",
+      "e": "Relatório ou painel entregue.",
+      "how": [
+       "Análises com o Claude sobre Nekt, Sapron e ScorePulse."
+      ],
+      "tools": [
+       "ops_claude",
+       "ops_nekt",
+       "ops_sapron"
+      ]
+     },
+     {
+      "id": "20.7",
+      "t": "Resumo semanal por responsável",
+      "m": "manual",
+      "ia": 0,
+      "ex": "pessoa",
+      "who": "Analista Adm/Fin",
+      "o": "Toda segunda, o que entrou, saiu, mudou e está atrasado em cada módulo.",
+      "e": "Resumo postado no canal da UTI marcando cada dono.",
+      "how": [
+       "Menu Resumo semanal de cada módulo da Central; aba Franquias em movimento para o histórico."
+      ],
+      "tools": [
+       "uti_central",
+       "uti_slack"
+      ]
+     },
+     {
+      "id": "20.8",
+      "t": "Leitura da Central pelo Claude",
+      "m": "misto",
+      "ia": 1,
+      "ex": "agente",
+      "who": "Agente (Claude)",
+      "o": "Auditar casos, atrasos e histórico sem clicar card por card.",
+      "e": "Lista de atrasos por responsável e conferência dos e-mails enviados.",
+      "how": [
+       "Endereço de leitura com recursos resumo, casos, eventos, planos, pedidos, integrações, protocolos e regras; chaves na thread do handover.",
+       "Pedido pronto: ler resumo, casos e eventos e listar o que está atrasado por responsável."
+      ],
+      "tools": [
+       "uti_endpoint",
+       "uti_claude"
+      ],
+      "aud": "Nada de hóspede ou proprietário sai pelo endpoint."
+     },
+     {
+      "id": "20.9",
+      "t": "Painéis da Central",
+      "m": "auto",
+      "ia": 0,
+      "ex": "sistema",
+      "who": "Sistema · Central da UTI",
+      "o": "Top 5 piores imóveis e franquias, carteira crítica, queda de Score, ocorrências e manutenções.",
+      "e": "Tela inicial atualizada todo dia pelo robô.",
+      "how": [
+       "Ranking de franquias por % da carteira crítica; queda de Score como alerta mesmo com Score bom."
+      ],
+      "tools": [
+       "uti_central",
+       "uti_robo"
+      ]
+     },
+     {
+      "t": "Auditoria de processo das analistas",
+      "m": "misto",
+      "ia": 2,
+      "ex": "agente",
+      "who": "Coordenador (David)",
+      "o": "Auditar todo dia 2 casos de cada analista e alimentar os KPIs de auditoria sem planilha.",
+      "e": "21 KPIs de auditoria (setores 42 e 43) lançados com comentário, e o detalhe na Wiki de cada analista.",
+      "how": [
+       "Skill auditar-processo sorteia os casos do dia útil anterior, risco primeiro.",
+       "Checa prazo e movimentação e lê o que a analista escreveu (tratativa, devolutiva, parecer).",
+       "Testa a defesa da analista antes de manter um achado; causa externa não conta para ela.",
+       "Só grava depois do ok do coordenador."
+      ],
+      "aud": "Coordenador confirma, troca ou descarta cada linha da tabela de conferência antes de gravar.",
+      "chk": "Skill nova (15/10); KPI de causa externa em validação com a Rayanne.",
+      "tools": [
+       "claude",
+       "adm_kpi"
+      ],
+      "id": "20.10"
+     },
+     {
+      "t": "Auditoria das ferramentas",
+      "m": "auto",
+      "ia": 2,
+      "ex": "agente",
+      "who": "Coordenador (David)",
+      "o": "Saber todo dia se cada automação da área está no ar e rodando com dado de hoje.",
+      "e": "Aviso só do que quebrou, com a evidência e o dono.",
+      "how": [
+       "Lê o inventário de automações da área.",
+       "Testa app no ar, cron, GitHub Actions, agentes do Olimpo e MCPs.",
+       "Revisão de cada ferramenta a cada 30 a 40 dias (pedido da Rayanne)."
+      ],
+      "chk": "Em desenho (rotina do coordenador).",
+      "tools": [
+       "claude"
+      ],
+      "id": "20.11"
+     }
+    ]
+   },
+   {
+    "id": "MP21",
+    "n": "Gerir demandas",
+    "o": "Toda dúvida e demanda do setor tem dono, prazo e resposta.",
+    "p": [
+     {
+      "id": "21.1",
+      "t": "Responder dúvidas na Newbyte",
+      "m": "manual",
+      "ia": 0,
+      "ex": "pessoa",
+      "who": "Analista de Danos",
+      "o": "Franquia saber o que fazer em qualquer etapa.",
+      "e": "Dúvida respondida e etiquetada.",
+      "how": [
+       "Lançamento, prazos, valores divergentes, falta de orçamento, status do dano e repasse.",
+       "Tags [Danos] Franquias, [Danos] Auxílio Lançamento e [Danos] Apoio a danos de hóspede."
+      ],
+      "tools": [
+       "dn_newbyte",
+       "cv_cob"
+      ]
+     },
+     {
+      "id": "21.2",
+      "t": "Apontar lançamento fora do padrão",
+      "m": "manual",
+      "ia": 0,
+      "ex": "pessoa",
+      "who": "Analista de Danos",
+      "o": "Corrigir a franquia que repete o erro.",
+      "e": "Ocorrência registrada.",
+      "how": [
+       "Dano indevido, fora do prazo, cobrança incorreta ou sem evidência obrigatória."
+      ],
+      "tools": [
+       "dn_newbyte",
+       "cv_cob"
+      ]
+     },
+     {
+      "id": "21.3",
+      "t": "Chamados do BackOffice financeiro",
+      "m": "manual",
+      "ia": 1,
+      "ex": "pessoa",
+      "who": "Analista Adm/Fin",
+      "o": "Responder taxa de limpeza, GOPs, precificação, despesas e repasses.",
+      "e": "Card concluído no SLA.",
+      "how": [
+       "Cards do Suporte Unificado atribuídos ao BackOffice; análise com o Claude quando cabe."
+      ],
+      "tools": [
+       "adm_suporte",
+       "adm_claude"
+      ]
+     },
+     {
+      "id": "21.4",
+      "t": "Chamados de score e stop",
+      "m": "manual",
+      "ia": 1,
+      "ex": "pessoa",
+      "who": "Analista Adm/Fin",
+      "o": "Responder gestores e franquias sobre nota, classificação e stop.",
+      "e": "Card concluído no SLA.",
+      "how": [
+       "Cards do Suporte Unificado atribuídos ao BackOffice; diagnóstico com o Claude quando envolve a cadeia de dados."
+      ],
+      "tools": [
+       "ops_suporte",
+       "ops_claude"
+      ]
+     },
+     {
+      "id": "21.5",
+      "t": "Dúvidas de franquia e de time",
+      "m": "manual",
+      "ia": 1,
+      "ex": "pessoa",
+      "who": "Analista Adm/Fin",
+      "o": "Responder por que entrou, o que falta e como sai.",
+      "e": "Resposta com base na ficha do caso e nas regras.",
+      "how": [
+       "Franquia responde ao e-mail automático (vai para a Vivianny); times perguntam no canal da UTI.",
+       "Dúvidas comuns: card não anda (vaga ou integração), manutenção já concluída (lida às 11h), imóvel sumiu (Conta 2, alta ou saiu da faixa)."
+      ],
+      "tools": [
+       "uti_central",
+       "uti_email",
+       "uti_slack"
+      ]
+     },
+     {
+      "t": "Saídas das reuniões",
+      "m": "misto",
+      "ia": 2,
+      "ex": "agente",
+      "who": "Coordenador (David)",
+      "o": "Nada do que sai da daily com a Rayanne, da daily do time e das weeklies depender de memória.",
+      "e": "Lista de demandas, decisões e o que é de outros, com destino sugerido; o coordenador escolhe o que vira task no Taskdex.",
+      "how": [
+       "Skill saidas-reuniao lê a transcrição pelo Composio (Drive) depois de cada reunião.",
+       "Cruza com as tasks abertas do quadro Adm. e Fin. para não duplicar.",
+       "Nunca cria task sozinha."
+      ],
+      "tools": [
+       "claude",
+       "ops_slack"
+      ],
+      "id": "21.6"
+     }
+    ]
+   },
+   {
+    "id": "MP22",
+    "n": "Interfaces de borda",
+    "o": "Assistência 24h: emergência no imóvel segurado, com o reembolso do serviço passando pelo time de Danos.",
+    "p": [
+     {
+      "id": "22.1",
+      "t": "Acionar a assistência ou prestador próprio",
+      "m": "manual",
+      "ia": 0,
+      "ex": "pessoa",
+      "who": "Franquia",
+      "o": "Atender a emergência rápido.",
+      "e": "Protocolo da NOW ou NF/recibo do prestador próprio.",
+      "how": [
+       "Franquia liga na Central 0800 da NOW; se não atender no prazo, contrata prestador."
+      ],
+      "tools": [
+       "dn_n0800",
+       "cv_a24"
+      ]
+     },
+     {
+      "id": "22.2",
+      "t": "Lançar no Sapron em 1 dia útil",
+      "m": "manual",
+      "ia": 0,
+      "ex": "pessoa",
+      "who": "Franquia",
+      "o": "Registrar com protocolo e recibo.",
+      "e": "Solicitação lançada.",
+      "how": [
+       "Anexar protocolo, recibos, evidências e descrição."
+      ],
+      "tools": [
+       "dn_sapron",
+       "cv_a24"
+      ]
+     },
+     {
+      "id": "22.3",
+      "t": "Pedir e acompanhar o reembolso",
+      "m": "manual",
+      "ia": 0,
+      "ex": "pessoa",
+      "who": "Analista de Danos",
+      "o": "Receber da seguradora o que foi pago.",
+      "e": "Reembolso aprovado ou negado e registrado.",
+      "how": [
+       "Analista valida e envia à NOW com o protocolo."
+      ],
+      "tools": [
+       "dn_n0800",
+       "dn_gmail",
+       "dn_sapron",
+       "cv_a24"
+      ],
+      "chk": "A assistência 24h não entra no sinistro do EasyCover (a extensão separa esse lançamento)."
+     }
+    ],
+    "tag": "Borda"
+   }
+  ]
+ },
+ {
+  "cls": "sup",
+  "lab": "Suporte",
+  "groups": [
+   {
+    "id": "MP23",
+    "n": "Manter as ferramentas",
+    "o": "Calculadora, ScorePulse, app de stop, Central da UTI, dashboard, extensões, skills e automações no ar e com dado certo.",
+    "p": [
+     {
+      "id": "23.1",
+      "t": "Manter a Calculadora 2026",
+      "m": "manual",
+      "ia": 1,
+      "ex": "pessoa",
+      "who": "Analista Adm/Fin",
+      "o": "Base renovada do Sapron, warnings e semente de exceções corretos.",
+      "e": "Correções publicadas por PR (staging e promoção à main).",
+      "how": [
+       "Repo calculadora-taxa-limpeza-2026-revisada; estado real conferido no /status; MCP taxa-limpeza."
+      ],
+      "tools": [
+       "adm_calc",
+       "adm_mcptaxa",
+       "adm_github",
+       "adm_claude"
+      ]
+     },
+     {
+      "id": "23.2",
+      "t": "Manter o dashboard financeiro",
+      "m": "manual",
+      "ia": 1,
+      "ex": "pessoa",
+      "who": "Analista Adm/Fin",
+      "o": "Pipeline e publicação funcionando.",
+      "e": "Site atualizado por PR na main.",
+      "how": [
+       "Repo franquias-financeiro; chave do Metabase e dados fora do Git."
+      ],
+      "tools": [
+       "adm_dash",
+       "adm_github",
+       "adm_claude"
+      ]
+     },
+     {
+      "id": "23.3",
+      "t": "Manter skills e automações",
+      "m": "manual",
+      "ia": 1,
+      "ex": "pessoa",
+      "who": "Analista Adm/Fin",
+      "o": "despesas-duplicadas, analise-taxa-limpeza, auditoria-comissao e kpis-franquias rodando.",
+      "e": "Skills publicadas no seazone-skills e tarefa agendada ativa.",
+      "how": [
+       "Tarefa agendada do radar; chaves e MCPs; PRs no seazone-skills."
+      ],
+      "tools": [
+       "adm_radar",
+       "adm_skilltaxa",
+       "adm_skillcom",
+       "adm_skillkpi",
+       "adm_github"
+      ]
+     },
+     {
+      "id": "23.4",
+      "t": "Manter o ScorePulse e a cadeia na Nekt",
+      "m": "manual",
+      "ia": 1,
+      "ex": "pessoa",
+      "who": "Analista Adm/Fin",
+      "o": "Fontes do Google Sheets ativas, syncs rodando, avaliações chegando.",
+      "e": "Cadeia sem falha a cada ciclo.",
+      "how": [
+       "Conferir runs da fonte, cabeçalhos das abas, syncs de reviews e scores; acionar o time de Dados quando a permissão não é da área."
+      ],
+      "tools": [
+       "ops_nekt",
+       "ops_scorepulse",
+       "ops_claude"
+      ]
+     },
+     {
+      "id": "23.5",
+      "t": "Manter o app de Stop de Crescimento",
+      "m": "manual",
+      "ia": 1,
+      "ex": "pessoa",
+      "who": "Analista Adm/Fin",
+      "o": "App, banco, papéis e rodada agendada funcionando.",
+      "e": "Correções publicadas por PR (merge só com OK do David).",
+      "how": [
+       "Repo stop-crescimento; papéis dos usuários; schema em uso; agendamento no GitHub Actions."
+      ],
+      "tools": [
+       "ops_appstop",
+       "ops_github",
+       "ops_claude"
+      ]
+     },
+     {
+      "id": "23.6",
+      "t": "Manter o bot sem receber imóveis",
+      "m": "manual",
+      "ia": 1,
+      "ex": "pessoa",
+      "who": "Analista Adm/Fin",
+      "o": "Rodada semanal postando certo.",
+      "e": "Bot no ar, chaves rotacionadas.",
+      "how": [
+       "Repo bot-sem-receber-imoveis, relay do Slack, chave da Nekt."
+      ],
+      "tools": [
+       "ops_bot",
+       "ops_github",
+       "ops_slack"
+      ]
+     },
+     {
+      "id": "23.7",
+      "t": "Central e robô Derek",
+      "m": "manual",
+      "ia": 1,
+      "ex": "pessoa",
+      "who": "Analista Adm/Fin",
+      "o": "Site e robô rodando todo dia; Kanbans e fichas certos.",
+      "e": "Robô publicado às 11h e Central sem aviso vermelho.",
+      "how": [
+       "Repo central-uti; robô no Coolify; dona é a Carol. A analista avisa quando não roda."
+      ],
+      "tools": [
+       "uti_github",
+       "uti_robo",
+       "uti_central"
+      ]
+     },
+     {
+      "id": "23.8",
+      "t": "Integrações com os times",
+      "m": "manual",
+      "ia": 0,
+      "ex": "pessoa",
+      "who": "Analista Adm/Fin",
+      "o": "Hub da Consultoria, Sapron, app da Qualidade, Conta 2 e Stop conectados.",
+      "e": "Situação por integração: Qualidade e hub no ar; Manutenção em simulação; Conta 2 e Stop aguardando; Anúncios manual.",
+      "how": [
+       "Hub (Nane e Mari): lê os casos a cada 30 min. Sapron (Vinicius): tag uti. Conta 2: endpoint de Anúncios. Stop e Captação: app de stop (David e Rayanne)."
+      ],
+      "tools": [
+       "uti_hub",
+       "uti_sapron",
+       "uti_qualidade",
+       "uti_anuncios",
+       "uti_appstop"
+      ]
+     },
+     {
+      "id": "23.9",
+      "t": "Endereço de leitura",
+      "m": "auto",
+      "ia": 0,
+      "ex": "sistema",
+      "who": "Sistema · Endereço de leitura da Central",
+      "o": "Time do projeto ler tudo o que a Central guarda sem acesso ao banco.",
+      "e": "Endpoint só-leitura com chave própria, paginado até 5.000 linhas.",
+      "how": [
+       "Criado pela Carol em 08/10/2026 para Rayanne e Isabella; chaves ficam na thread do Slack, nunca em documento."
+      ],
+      "tools": [
+       "uti_endpoint"
+      ]
+     }
+    ]
+   }
+  ]
+ }
+];
+
+const ST = {ar:"No ar", val:"Em validação", des:"Em desenho", dem:"Sob demanda"};
+const AUTOS = [
+ {
+  "lab": "Agentes e bots",
+  "items": [
+   {
+    "id": "A1",
+    "n": "Cobrança Judicial Danos (Olimpo)",
+    "st": "val",
+    "f": "Olimpo · EKS lab · diário 18h",
+    "o": "Lê os danos que entraram em Cobrança Judicial e posta um card por dano no canal do Jurídico, com as evidências.",
+    "s": [
+     "6.2",
+     "6.3"
+    ],
+    "chk": "Arquitetura dizia 'em produção'; o manifesto está em lab (playground)."
+   },
+   {
+    "id": "A2",
+    "n": "Assistente Extrajudicial de Danos (Olimpo)",
+    "st": "des",
+    "f": "Olimpo · EKS lab · botão no Slack",
+    "o": "Vai apoiar o caso extrajudicial com IA a partir do card do Jurídico. Ainda não está em uso: aguarda ajuste da tech (suporte aberto pela Fabi); até lá, 6.5 e 6.6 são manuais.",
+    "s": [
+     "6.4",
+     "6.5",
+     "6.6"
+    ]
+   },
+   {
+    "id": "A3",
+    "n": "Rodada do Stop de crescimento",
+    "st": "ar",
+    "f": "GitHub Actions · diário 9h (dia seguinte ao Score)",
+    "o": "Aplica e remove o stop automático pela classificação do Score e posta no #avisos-operação.",
+    "s": [
+     "14.1",
+     "14.3"
+    ]
+   },
+   {
+    "id": "A4",
+    "n": "Bot franquias sem receber imóveis",
+    "st": "ar",
+    "f": "GitHub Actions · segunda 9h",
+    "o": "Lista franquias sem imóvel novo há 60, 90 e 180 dias que não estão em stop.",
+    "s": [
+     "14.4"
+    ]
+   },
+   {
+    "id": "A5",
+    "n": "Robô Derek (Central da UTI)",
+    "st": "val",
+    "f": "Coolify · 11h e a cada 15 min",
+    "o": "Detecta imóveis e franquias críticos, faz a triagem, abre a Pré-UTI e acompanha as metas.",
+    "s": [
+     "16.1",
+     "16.2",
+     "16.3",
+     "16.4",
+     "18.1",
+     "18.5"
+    ],
+    "chk": "Central só em staging; execução do robô sem evidência na auditoria de 15/10."
+   },
+   {
+    "id": "A6",
+    "n": "Radar de despesas duplicadas",
+    "st": "ar",
+    "f": "Cron no PC do coordenador · dias úteis 8h50",
+    "o": "Aponta no Slack os grupos de despesas possivelmente duplicadas, com valor em risco e confiança.",
+    "s": [
+     "8.4"
+    ],
+    "chk": "Roda no PC do coordenador: não rodou de 26/09 a 12/10."
+   },
+   {
+    "id": "A7",
+    "n": "Semente de lavanderias (Calculadora 2026)",
+    "st": "ar",
+    "f": "GitHub Actions · diário",
+    "o": "Atualiza a base de custo de lavanderia usada pela régua da taxa de limpeza.",
+    "s": [
+     "9.5"
+    ]
+   }
+  ]
+ },
+ {
+  "lab": "Extensão",
+  "items": [
+   {
+    "id": "E1",
+    "n": "AirCover Autofill",
+    "st": "ar",
+    "f": "Chrome das analistas · por caso",
+    "o": "Preenche o pedido no AirCover a partir do Sapron e grava o código, o status e o link de volta.",
+    "s": [
+     "3.1",
+     "3.2"
+    ]
+   },
+   {
+    "id": "E2",
+    "n": "Acionar Airbnb",
+    "st": "ar",
+    "f": "Chrome · por caso",
+    "o": "Pede a mediação do Airbnb com a justificativa por tipo de item.",
+    "s": [
+     "3.3"
+    ]
+   },
+   {
+    "id": "E3",
+    "n": "Cobrança Newbyte",
+    "st": "ar",
+    "f": "Chrome · cobrança diária",
+    "o": "Envia as 3 tentativas ao hóspede, registra a tratativa, finaliza o dano pago e encaminha depois da 3ª tentativa.",
+    "s": [
+     "4.1",
+     "4.2",
+     "4.3",
+     "4.5",
+     "4.6",
+     "6.1",
+     "7.1",
+     "7.2",
+     "7.3"
+    ]
+   },
+   {
+    "id": "E4",
+    "n": "Finalizar Dano",
+    "st": "ar",
+    "f": "Chrome · por caso",
+    "o": "Finaliza o dano pago pelo Airbnb e registra o reembolso ao proprietário com o comprovante.",
+    "s": [
+     "7.1",
+     "7.2"
+    ]
+   },
+   {
+    "id": "E5",
+    "n": "Sinistro EasyCover",
+    "st": "ar",
+    "f": "Chrome · por caso",
+    "o": "Abre e envia o sinistro no portal da NOW e grava o protocolo no Sapron.",
+    "s": [
+     "5.2",
+     "5.3"
+    ]
+   },
+   {
+    "id": "E6",
+    "n": "Assistente de Danos",
+    "st": "des",
+    "f": "Newbyte · planejado",
+    "o": "Sugerir respostas na negociação com o hóspede.",
+    "s": [
+     "4.4"
+    ]
+   }
+  ]
+ },
+ {
+  "lab": "Skills (rodadas pelo time)",
+  "items": [
+   {
+    "id": "S1",
+    "n": "kpis-franquias",
+    "st": "dem",
+    "f": "Claude Code · diário, antes das 9h",
+    "o": "Preenche, audita e comenta os KPIs dos setores OPS, Danos e Financeiro a partir das fontes vivas.",
+    "s": [
+     "20.1",
+     "20.4"
+    ]
+   },
+   {
+    "id": "S2",
+    "n": "auditar-processo",
+    "st": "val",
+    "f": "Claude Code · dias úteis 9h55",
+    "o": "Auditoria diária de processo das analistas, gravando os 21 KPIs de auditoria.",
+    "s": [
+     "20.10"
+    ]
+   },
+   {
+    "id": "S3",
+    "n": "saidas-reuniao",
+    "st": "val",
+    "f": "Claude Code · depois de cada daily e weekly",
+    "o": "Transforma as reuniões em demandas com destino sugerido.",
+    "s": [
+     "21.6"
+    ]
+   },
+   {
+    "id": "S4",
+    "n": "fechar-score",
+    "st": "dem",
+    "f": "Claude Code · mensal, até o dia 14",
+    "o": "Fecha o Score do mês: confere as bases, calcula os critérios e grava.",
+    "s": [
+     "13.1",
+     "13.2",
+     "13.4"
+    ]
+   },
+   {
+    "id": "S5",
+    "n": "cards-checkin-checkout",
+    "st": "dem",
+    "f": "Claude Code · mensal",
+    "o": "Recalcula o critério de cards de check-in e checkout do Score.",
+    "s": [
+     "13.4"
+    ]
+   },
+   {
+    "id": "S6",
+    "n": "avaliacoes-por-reserva",
+    "st": "dem",
+    "f": "Claude Code · mensal",
+    "o": "Calcula a taxa real de avaliações por reserva para o Score.",
+    "s": [
+     "13.4"
+    ]
+   },
+   {
+    "id": "S7",
+    "n": "reciclagem-franquias-2",
+    "st": "dem",
+    "f": "Claude Code · dia útil seguinte ao Score",
+    "o": "Gera o relatório de reciclagem de franquias pelo Score.",
+    "s": [
+     "13.5"
+    ]
+   },
+   {
+    "id": "S8",
+    "n": "monthly-franquias",
+    "st": "dem",
+    "f": "Claude Code · 1ª semana do mês",
+    "o": "Comenta os gráficos da Monthly de Franquias com a causa apurada nas fontes.",
+    "s": [
+     "20.1",
+     "20.4"
+    ]
+   },
+   {
+    "id": "S9",
+    "n": "analise-taxa-limpeza",
+    "st": "dem",
+    "f": "Claude Code · por pedido",
+    "o": "Roda o motor da Calculadora 2026 e redige o parecer do pedido de taxa.",
+    "s": [
+     "9.2",
+     "9.6",
+     "19.3"
+    ]
+   },
+   {
+    "id": "S10",
+    "n": "conferencia-onboarding-taxa",
+    "st": "dem",
+    "f": "Claude Code · sob demanda",
+    "o": "Confere a taxa dos imóveis em onboarding contra a régua viva.",
+    "s": [
+     "9.5"
+    ]
+   },
+   {
+    "id": "S11",
+    "n": "despesas-duplicadas",
+    "st": "ar",
+    "f": "Claude Code · via rotina do radar",
+    "o": "Detecta despesas duplicadas por imóvel, categoria, valor e anexo.",
+    "s": [
+     "8.4"
+    ]
+   },
+   {
+    "id": "S12",
+    "n": "auditoria-comissao-franquias",
+    "st": "ar",
+    "f": "Claude Code · semanal (plugin seazone-skills/geral, da Isa)",
+    "o": "Audita a comissão do host de todas as franquias e imóveis: percentual e operação no Sapron contra a régua confirmada ou o contrato.",
+    "s": [
+     "10.2",
+     "19.4"
+    ]
+   },
+   {
+    "id": "S13",
+    "n": "plano-semanal",
+    "st": "dem",
+    "f": "Claude Code · segunda",
+    "o": "Painel da semana com Taskdex, weekly e daily.",
+    "s": [
+     "21.6"
+    ]
+   }
+  ]
+ },
+ {
+  "lab": "Rotinas fixas",
+  "items": [
+   {
+    "id": "R1",
+    "n": "Rotina do coordenador",
+    "st": "des",
+    "f": "Dias úteis · 8h30 a 17h50",
+    "o": "Rotina mãe: KPIs antes das 9h, comentário, saídas da daily, auditorias, pendências e fechamento do dia.",
+    "s": [
+     "20.1",
+     "20.10",
+     "20.11",
+     "21.6"
+    ],
+    "chk": "Em construção; validação com a Rayanne na semana de 19/10."
+   },
+   {
+    "id": "R2",
+    "n": "Wiki de governança",
+    "st": "ar",
+    "f": "Cron · dias úteis 8h07, 8h37 e 18h37",
+    "o": "Atualiza e revisa a Wiki do time com transcrições e Slack.",
+    "s": [
+     "21.6"
+    ],
+    "chk": "Roda no PC do coordenador."
+   },
+   {
+    "id": "R3",
+    "n": "Fechamento do Score e rodada do Stop",
+    "st": "ar",
+    "f": "Mensal · Score até o dia 14, Stop no dia seguinte",
+    "o": "Score publicado no ScorePulse e rodada mensal do Stop.",
+    "s": [
+     "13.3",
+     "15.1"
+    ]
+   },
+   {
+    "id": "R4",
+    "n": "Auditoria do fechamento de repasses",
+    "st": "ar",
+    "f": "Mensal · após o aviso de fechamento",
+    "o": "Cruza Compilado, CRC e Sapron antes de liberar o pagamento às franquias.",
+    "s": [
+     "10.1"
+    ]
+   }
+  ]
+ }
+];
+
+/* ===================== DAQUI PRA BAIXO NÃO MEXER ===================== */
+const autosOf = id => AUTOS.flatMap(g=>g.items).filter(a=>a.s.includes(id));
+const ARROW_DOWN = `<div class="down"><svg viewBox="0 0 10 16" aria-hidden="true"><line x1="5" y1="0" x2="5" y2="10"/><path d="M1 9 L5 16 L9 9 Z"/></svg></div>`;
+const ARROW_RIGHT = `<div class="join"><svg viewBox="0 0 36 14" preserveAspectRatio="none" aria-hidden="true"><line x1="2" y1="7" x2="27" y2="7"/><path d="M26 2 L34 7 L26 12 Z"/></svg></div>`;
+const REG = {};
+const tags = p => `<span class="tags"><span class="mode ${p.m}">${MODE[p.m]}</span><span class="ia i${p.ia}">${IA[p.ia]}</span><span class="ex">${EX[p.ex]}</span>${p.imp?`<span class="imp">${IMP[p.imp.d]}</span>`:""}${p.chk?`<span class="chk">Validar</span>`:""}</span>`;
+function box(p,tr){REG[p.id]={kind:"p",d:p,tr};return `<button class="box" type="button" data-k="${p.id}" aria-expanded="false"><span class="t"><span class="code">${p.id}</span><span>${p.t}</span></span><span class="o">${p.o}</span>${tags(p)}</button>`;}
+function col(mp,tr){REG[mp.id]={kind:"mp",d:mp,tr};return `<div class="col"><button class="head" type="button" data-k="${mp.id}" aria-expanded="false"><span class="v">${mp.id} · ${mp.v}</span><span class="n">${mp.n}</span><span class="o">${mp.o}</span><span class="e"><b>Entrega:</b> ${mp.e}</span></button>${mp.p.map(p=>ARROW_DOWN+box(p,tr)).join("")}</div>`;}
+const valueBox = v => `<div class="value"><b>Valor para a Seazone</b>${v.map((s,i)=>`<span class="${i===v.length-1?'meta':''}">${s}</span>`).join(`<span>↓</span>`)}</div>`;
+const flow = document.getElementById("flow");
+flow.insertAdjacentHTML("afterbegin", TRAILS.map(tr=>{const cols=tr.mps.map(()=>"1fr").join(" 36px ");return `<section class="trail ${tr.cls}"><div class="trail-h"><span class="tk">${tr.k}</span><span class="tn">${tr.n}</span><span class="to">${tr.o}</span></div><div class="main" style="grid-template-columns:${cols} 36px 170px">${tr.mps.map(mp=>col(mp,tr)).join(ARROW_RIGHT)}${ARROW_RIGHT}${valueBox(tr.val)}</div></section>`;}).join(""));
+document.getElementById("base").innerHTML = LANES.map(l=>`<div class="lane ${l.cls}"><span class="lab">${l.lab}</span><div class="row">${l.groups.map(g=>`<div class="grp"><span class="gh"><span class="code">${g.id}</span>${g.n} ${g.tag?`<span class="new">${g.tag}</span>`:''}</span><span class="go">${g.o}</span><div class="chips">${g.p.map(p=>{REG[p.id]={kind:"p",d:p};return `<button class="chip" type="button" data-k="${p.id}" aria-expanded="false"><span class="code">${p.id}</span><span class="nm">${p.t}</span><span class="ia i${p.ia}">${IA[p.ia]}</span>${p.imp?`<span class="imp">${IMP[p.imp.d]}</span>`:""}${p.chk?`<span class="chk">Validar</span>`:""}</button>`}).join("")}</div></div>`).join("")}</div>`).join("");
+document.getElementById("autos").innerHTML = AUTOS.map(g=>`<div class="agrp"><span class="lab">${g.lab}</span>${g.items.map(a=>`<div class="acard"><span class="t"><span class="code">${a.id}</span><span>${a.n}</span></span><span class="tags"><span class="st ${a.st}">${ST[a.st]}</span>${a.chk?`<span class="chk" title="${a.chk}">Validar</span>`:""}</span><span class="o">${a.o}${a.chk?` <i>(${a.chk})</i>`:""}</span><span class="f">${a.f}</span><span class="steps">Etapas: ${a.s.map(id=>`<button class="stepb" type="button" data-k="${id}" aria-expanded="false">${id}</button>`).join("")}</span></div>`).join("")}</div>`).join("");
+const main = TRAILS.flatMap(t=>t.mps.flatMap(m=>m.p)), all = main.concat(LANES.flatMap(l=>l.groups.flatMap(g=>g.p)));
+const cnt = (arr,f) => arr.filter(f).length;
+document.getElementById("summary").innerHTML = `<div class="g"><span class="gl">Fluxo principal</span><span class="gv"><span><b>${main.length}</b> processos em ${TRAILS.length} ${TRAILS.length===1?'trilha':'trilhas'}</span><span><b>${all.length-main.length}</b> de gestão e suporte</span></span></div><div class="g"><span class="gl">Execução (fluxo principal)</span><span class="gv">${["auto","misto","manual"].map(k=>`<span><span class="mode ${k}">${MODE[k]}</span> <b>${cnt(main,p=>p.m===k)}</b></span>`).join("")}</span></div><div class="g"><span class="gl">Uso de IA (fluxo principal)</span><span class="gv">${[0,1,2].map(i=>`<span><span class="ia i${i}">${IA[i]}</span> <b>${cnt(main,p=>p.ia===i)}</b></span>`).join("")}</span></div><div class="g"><span class="gl">Quem executa (fluxo principal)</span><span class="gv">${Object.keys(EX).map(k=>`<span><span class="ex">${EX[k]}</span> <b>${cnt(main,p=>p.ex===k)}</b></span>`).join("")}</span></div><div class="g"><span class="gl">Interface com a Implantação</span><span class="gv">${Object.keys(IMP).map(k=>`<span><span class="imp">${IMP[k]}</span> <b>${cnt(all,p=>p.imp&&p.imp.d===k)}</b></span>`).join("")}<span><span class="chk">Validar</span> <b>${cnt(all,p=>p.chk)}</b></span></span></div>`;
+const pop = document.getElementById("pop");
+let cur=null,pinned=false,hideT=null,showT=null;
+const tool = k => { const t=T[k]; return t?.u ? `<a class="tool" href="${t.u}" target="_blank" rel="noopener">${t.n} ↗</a>` : `<span class="tool">${t?.n||k}</span>`; };
+const sec = (l,h,c="") => `<div class="sec ${c}"><span class="sl">${l}</span>${h}</div>`;
+function content(k){const r=REG[k],d=r.d;const head=`<div class="ph"><h3><span class="code">${d.id}</span>${d.t||d.n}</h3><button class="x" type="button" aria-label="Fechar">×</button></div>`;if(r.kind==="mp")return head+sec("Objetivo",`<p>${d.o}</p>`)+sec("Entrega",`<p>${d.e}</p>`)+sec("Valor para a Seazone",`<p>Contribui para: <b>${d.val}</b> (${r.tr.val.join(" → ")}).</p>`)+sec("Como entregar mais valor",`<p>${d.opp}</p><p style="font-size:12px;color:var(--ink3)">Sugestão para validar com a liderança.</p>`,"opp");return head+tags(d)+sec("Responsável",`<p>${d.who}</p>`)+sec("Objetivo",`<p>${d.o}</p>`)+sec("Entrega",`<p>${d.e}</p>`)+sec("Como funciona", d.how.length>1?`<ul>${d.how.map(h=>`<li>${h}</li>`).join("")}</ul>`:`<p>${d.how[0]}</p>`)+(d.aud?sec("Auditoria",`<p>${d.aud}</p>`,"aud"):"")+(d.imp?sec(d.imp.d==="recebe"?"Interface: recebemos da Implantação":"Interface: entregamos para a Implantação",`<p>${d.imp.t}</p>`,"impb"):"")+(d.chk?sec("A validar",`<p>${d.chk}</p>`,"chkb"):"")+(autosOf(d.id).length?sec("Agentes e rotinas",`<ul>${autosOf(d.id).map(a=>`<li><b>${a.id}</b> ${a.n} (${ST[a.st].toLowerCase()})</li>`).join("")}</ul>`):"")+sec("Ferramentas",`<div class="tools">${d.tools.map(tool).join("")}</div>`);}
+function place(el){const b=el.getBoundingClientRect(),pw=pop.offsetWidth,ph=pop.offsetHeight,vw=innerWidth,vh=innerHeight;let x,y=b.top;if(b.right+10+pw<=vw-12)x=b.right+10;else if(b.left-pw-10>=12)x=b.left-pw-10;else{x=Math.max(12,Math.min(b.left,vw-pw-12));y=b.bottom+8;}if(y+ph>vh-12)y=Math.max(12,vh-ph-12);pop.style.left=x+"px";pop.style.top=y+"px";}
+function open(el,pin){clearTimeout(hideT);if(cur&&cur!==el)cur.setAttribute("aria-expanded","false");cur=el;pinned=pin;el.setAttribute("aria-expanded","true");pop.innerHTML=content(el.dataset.k);pop.hidden=false;place(el);pop.querySelector(".x").onclick=close;}
+function close(){pop.hidden=true;pinned=false;if(cur){cur.setAttribute("aria-expanded","false");cur=null;}}
+document.querySelectorAll("[data-k]").forEach(el=>{el.addEventListener("mouseenter",()=>{if(pinned)return;clearTimeout(showT);showT=setTimeout(()=>open(el,false),120);});el.addEventListener("mouseleave",()=>{clearTimeout(showT);if(!pinned)hideT=setTimeout(close,180);});el.addEventListener("click",e=>{e.stopPropagation();(cur===el&&pinned)?close():open(el,true);});});
+pop.addEventListener("mouseenter",()=>clearTimeout(hideT));
+pop.addEventListener("mouseleave",()=>{if(!pinned)hideT=setTimeout(close,180);});
+pop.addEventListener("click",e=>e.stopPropagation());
+document.addEventListener("click",()=>{if(!pop.hidden)close();});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!pop.hidden){const c=cur;close();c&&c.focus();}});
+addEventListener("resize",()=>{if(cur&&!pop.hidden)place(cur);});
+document.querySelector(".scroll").addEventListener("scroll",()=>{if(cur&&!pop.hidden)place(cur);});
+addEventListener("scroll",()=>{if(cur&&!pop.hidden)place(cur);},{passive:true});
+
+/* abas */
+document.querySelectorAll(".tab").forEach(t=>{
+  t.addEventListener("click",()=>{
+    if(!pop.hidden)close();
+    document.querySelectorAll(".tab").forEach(x=>x.setAttribute("aria-selected","false"));
+    document.querySelectorAll(".tabpanel").forEach(x=>x.hidden=true);
+    t.setAttribute("aria-selected","true");
+    document.getElementById("t-"+t.dataset.tab).hidden=false;
+  });
+});
+</script>
+</body>
+</html>
