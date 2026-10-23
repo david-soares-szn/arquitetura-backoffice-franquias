@@ -232,7 +232,7 @@ a.tool:hover,a.tool:focus-visible{background:var(--bluebg);outline:none}
        - Instrução + Trilhas (flow) + Lanes de Gestão e Suporte (base)
   ===================================================================== -->
   <section class="tabpanel" id="t-arq" role="tabpanel" aria-labelledby="tab-arq">
-    <p class="hint">Passe o mouse ou clique em qualquer processo para ver objetivo, entrega, como funciona, auditoria, interface com a Implantação e ferramentas. Clique no cabeçalho de cada coluna para ver o valor que ela entrega.</p>
+    <p class="hint">Passe o mouse ou clique em qualquer processo para ver objetivo, entrega, como funciona, auditoria, interfaces com a Implantação e o Relacionamento e ferramentas. Clique no cabeçalho de cada coluna para ver o valor que ela entrega.</p>
 
     <!-- 3. FLOW: as trilhas de macroprocessos
          - Cada trilha é uma linha horizontal com N colunas (uma por MPx).
@@ -281,6 +281,8 @@ a.tool:hover,a.tool:focus-visible{background:var(--bluebg);outline:none}
   <div class="legend">
     <span><span class="imp">← Implantação</span> recebemos algo da Implantação</span>
     <span><span class="imp">→ Implantação</span> entregamos algo para a Implantação</span>
+    <span><span class="imp">← Relacionamento</span> recebemos algo do Relacionamento Franquias</span>
+    <span><span class="imp">→ Relacionamento</span> entregamos algo para o Relacionamento Franquias</span>
     <span><span class="chk">Validar</span> ponto deduzido, falta confirmar</span>
   </div>
   <div class="legend">
@@ -684,7 +686,8 @@ const T = {
 const MODE = {auto:"Automático", misto:"Misto", manual:"Manual"};
 const IA = ["Sem IA","IA assiste","IA executa"];
 const EX = {sistema:"Sistema", agente:"Agente", pessoa:"Pessoa"};
-const IMP = {recebe:"← Implantação", envia:"→ Implantação"};
+const IMP = {recebe:"← Implantação", envia:"→ Implantação", rel_recebe:"← Relacionamento", rel_envia:"→ Relacionamento"};
+const IMPT = {recebe:"Interface: recebemos da Implantação", envia:"Interface: entregamos para a Implantação", rel_recebe:"Interface: recebemos do Relacionamento", rel_envia:"Interface: entregamos para o Relacionamento"};
 
 const TRAILS = [
  {
@@ -2582,34 +2585,36 @@ const TRAILS = [
     "id": "MP19",
     "v": "Distrato",
     "n": "Encerrar a franquia sem prejuízo",
-    "o": "Encerrar o contrato de franquia de forma rastreável: imóveis migrados, pendências apuradas e descontadas no último repasse, enxoval aproveitado e acessos encerrados sem perder dados.",
+    "o": "Fazer a parte do BackOffice no distrato: pendências apuradas e descontadas no último repasse, enxoval aproveitado, ex-franqueado como parceiro quando há indicações e acessos encerrados sem perder dados.",
     "e": "Distrato concluído: último repasse liquidado com comprovante e host ID desativado com a data de inativação.",
     "val": [
      "Nenhuma pendência descoberta depois do último repasse",
      "Recompra só do que a redistribuição não cobriu",
      "Host desativado sem perder indicações"
     ],
-    "opp": "Subprocessos 1, 2 e 3 (identificação, comunicação e migração) ainda a mapear com o Relacionamento e o Suporte Franquias; prazos entre formalização e conclusão a definir.",
+    "opp": "Identificação, comunicação com a franquia, migração dos imóveis e formalização são do Relacionamento Franquias (Gerência de Franquias e Suporte Franquias) e aparecem aqui só como interface. Prazos entre formalização e conclusão ainda a definir.",
     "p": [
      {
       "id": "19.1",
-      "t": "Registrar o distrato e travar imóveis novos",
+      "t": "Receber o distrato e travar imóveis novos",
       "m": "manual",
       "ia": 0,
       "ex": "pessoa",
-      "who": "Gerência de Relacionamento (registra) e Analista Adm/Fin (stop)",
-      "o": "Reconhecer que a franquia vai sair, com origem e motivo, e parar a entrada de imóvel novo.",
-      "e": "Distrato registrado com origem (franqueado ou Seazone) e motivo da lista fechada; stop do tipo distrato no app; aviso no #avisos-operação.",
+      "who": "Analista Adm/Fin",
+      "o": "Começar a frente do BackOffice assim que o distrato é registrado e parar a entrada de imóvel novo.",
+      "e": "Stop do tipo distrato no app e frentes do BackOffice abertas (pendências, enxoval).",
       "how": [
-       "Origem: a pedido do franqueado ou por decisão da Seazone (UTI de franquias, Stop, performance, diretoria).",
-       "Situação do distrato: Identificado → Formalizado → Concluído, ou Cancelado antes da formalização (desfaz stop, migrações e repasses segurados).",
-       "O stop do tipo distrato no app alimenta os KPIs 528 a 530 e tira a franquia do KPI de franquias sem receber imóvel."
+       "O stop do tipo distrato alimenta os KPIs 528 a 530 e tira a franquia do KPI de franquias sem receber imóvel.",
+       "Se o distrato for cancelado antes da formalização, desfaz o stop e os repasses segurados."
       ],
-      "chk": "Stop aplicado já na identificação: a validar com a Vivianny.",
+      "imp": {
+       "d": "rel_recebe",
+       "t": "O Relacionamento Franquias identifica o distrato (a pedido do franqueado ou por decisão da Seazone), tenta reter, registra origem e motivo e avisa os times no #avisos-operação. Depois comunica a franquia e abre o aviso prévio de 30 dias."
+      },
+      "chk": "Quem aplica o stop e se é já na identificação: a validar com a Vivianny.",
       "tools": [
-       "dis_app",
        "ops_appstop",
-       "ops_slack",
+       "dis_app",
        "dis_canvas"
       ]
      },
@@ -2632,21 +2637,25 @@ const TRAILS = [
      },
      {
       "id": "19.3",
-      "t": "Acompanhar a migração dos imóveis",
+      "t": "Acompanhar a migração e receber as divergências",
       "m": "manual",
       "ia": 0,
       "ex": "pessoa",
-      "who": "Suporte Franquias (executa) · Analista Adm/Fin (acompanha e cobra)",
-      "o": "Imóveis ativos e em onboarding passados para outra franquia, com o proprietário avisado.",
-      "e": "Último imóvel migrado; datas de migração, divergências e enxoval contado por imóvel chegam ao BackOffice.",
+      "who": "Analista Adm/Fin",
+      "o": "Cobrar a migração no prazo e receber por imóvel o que alimenta as pendências e o enxoval.",
+      "e": "Datas de migração, divergências e enxoval contado por imóvel na planilha de pendências.",
       "how": [
-       "Corre em paralelo ao aviso prévio de 30 dias, junto com as pendências e o enxoval.",
-       "A Gerência de Franquias alinha a migração com o franqueado."
+       "Corre em paralelo ao aviso prévio, junto com as pendências e o enxoval.",
+       "O documento de pendências só fecha depois da última migração."
       ],
+      "imp": {
+       "d": "rel_recebe",
+       "t": "O Suporte Franquias (Larissa) migra os imóveis ativos e em onboarding e avisa os proprietários; a Gerência de Franquias alinha com o franqueado."
+      },
       "chk": "Migração a remapear com a Larissa (onboarding, aviso ao proprietário, devolução de enxoval e chaves).",
       "tools": [
-       "adm_sapron",
-       "dis_pend"
+       "dis_pend",
+       "adm_sapron"
       ]
      },
      {
@@ -2663,11 +2672,16 @@ const TRAILS = [
        "A taxa de franquia não é reembolsável; o saldo de indicações fica fora (vai para o cadastro como parceiro).",
        "Repasses futuros podem ser segurados quando as pendências superam o que resta a repassar."
       ],
+      "imp": {
+       "d": "rel_envia",
+       "t": "O documento de pendências vai para a reunião de formalização conduzida pelo Relacionamento (com o Jurídico), junto com o e-mail \"Comunicado de formalização do distrato e descontos\"."
+      },
       "chk": "Formalizar com pendências parciais quando a migração passa do aviso prévio: a validar com Rayanne e Vivianny.",
       "tools": [
        "dis_pend",
        "adm_sapron",
-       "adm_dash"
+       "adm_dash",
+       "dis_docs"
       ]
      },
      {
@@ -2690,26 +2704,6 @@ const TRAILS = [
      },
      {
       "id": "19.6",
-      "t": "Formalizar o distrato",
-      "m": "manual",
-      "ia": 0,
-      "ex": "pessoa",
-      "who": "Gerência de Relacionamento e Jurídico",
-      "o": "Assinar o distrato com o documento de pendências na mesa.",
-      "e": "Distrato assinado no ClickSign ou distrato unilateral registrado pelo Jurídico.",
-      "how": [
-       "Marco do processo: libera o último repasse, o cadastro como parceiro e a desativação do host.",
-       "Distrato por decisão da Seazone: Jurídico na reunião e carta com AR; reunião gravada.",
-       "Recusa ou silêncio na assinatura: distrato unilateral pedido ao Jurídico."
-      ],
-      "tools": [
-       "adm_clicksign",
-       "adm_jur",
-       "dis_docs"
-      ]
-     },
-     {
-      "id": "19.7",
       "t": "Liquidar o último repasse",
       "m": "manual",
       "ia": 0,
@@ -2720,6 +2714,10 @@ const TRAILS = [
       "how": [
        "Envia os descontos e o pedido do último repasse ao Fechamento pelo #suporte-financeiro."
       ],
+      "imp": {
+       "d": "rel_recebe",
+       "t": "O Relacionamento formaliza o distrato com o Jurídico (assinatura no ClickSign ou distrato unilateral). A formalização libera o último repasse, o cadastro como parceiro e a desativação do host."
+      },
       "chk": "Fluxo e prazo do último repasse a definir com o Fechamento.",
       "tools": [
        "dn_fin",
@@ -2727,7 +2725,7 @@ const TRAILS = [
       ]
      },
      {
-      "id": "19.8",
+      "id": "19.7",
       "t": "Cadastrar o ex-franqueado como parceiro",
       "m": "manual",
       "ia": 0,
@@ -2736,7 +2734,7 @@ const TRAILS = [
       "o": "Migrar o perfil de franqueado para parceiro sem perder as indicações.",
       "e": "Indicações e saldo migrados e Parcerias avisada.",
       "how": [
-       "Só existe quando há indicações pendentes.",
+       "Só existe quando há indicações pendentes (o interesse do franqueado chega na comunicação feita pelo Relacionamento).",
        "Não trava a conclusão, mas trava a desativação do host."
       ],
       "chk": "Quem cria o perfil de parceiro e se o fluxo do Pipedrive ainda vale: a validar.",
@@ -2746,19 +2744,23 @@ const TRAILS = [
       ]
      },
      {
-      "id": "19.9",
+      "id": "19.8",
       "t": "Desativar o host ID e concluir",
       "m": "manual",
       "ia": 0,
       "ex": "pessoa",
       "who": "Analista Adm/Fin (aciona o BU Hospedagem)",
       "o": "Encerrar todos os acessos do franqueado sem perder dados.",
-      "e": "Host ID desativado e data de inativação registrada no mesmo dia (2ª condição); franqueado distratado na Jornada e times avisados.",
+      "e": "Host ID desativado e data de inativação registrada no mesmo dia (2ª condição); franqueado distratado na Jornada.",
       "how": [
        "Desativar o host ID no Sapron desativa os demais acessos.",
        "Com indicações pendentes, só depois do cadastro como parceiro.",
-       "Fim do distrato avisado no #avisos-operação; a data de inativação alimenta o ScorePulse e os KPIs."
+       "A data de inativação alimenta o ScorePulse e os KPIs."
       ],
+      "imp": {
+       "d": "rel_envia",
+       "t": "Conclusão avisada ao Relacionamento e aos times no #avisos-operação: último repasse liquidado e host desativado."
+      },
       "tools": [
        "adm_sapron",
        "dis_bu",
@@ -4102,12 +4104,12 @@ document.getElementById("base").innerHTML = LANES.map(l=>`<div class="lane ${l.c
 document.getElementById("autos").innerHTML = AUTOS.map(g=>`<div class="agrp"><span class="lab">${g.lab}</span>${g.items.map(a=>`<div class="acard"><span class="t"><span class="code">${a.id}</span><span>${a.n}</span></span><span class="tags"><span class="st ${a.st}">${ST[a.st]}</span>${a.chk?`<span class="chk" title="${a.chk}">Validar</span>`:""}</span><span class="o">${a.o}${a.chk?` <i>(${a.chk})</i>`:""}</span><span class="f">${a.f}</span><span class="steps">Etapas: ${a.s.map(id=>`<button class="stepb" type="button" data-k="${id}" aria-expanded="false">${id}</button>`).join("")}</span></div>`).join("")}</div>`).join("");
 const main = TRAILS.flatMap(t=>t.mps.flatMap(m=>m.p)), all = main.concat(LANES.flatMap(l=>l.groups.flatMap(g=>g.p)));
 const cnt = (arr,f) => arr.filter(f).length;
-document.getElementById("summary").innerHTML = `<div class="g"><span class="gl">Fluxo principal</span><span class="gv"><span><b>${main.length}</b> processos em ${TRAILS.length} ${TRAILS.length===1?'trilha':'trilhas'}</span><span><b>${all.length-main.length}</b> de gestão e suporte</span></span></div><div class="g"><span class="gl">Execução (fluxo principal)</span><span class="gv">${["auto","misto","manual"].map(k=>`<span><span class="mode ${k}">${MODE[k]}</span> <b>${cnt(main,p=>p.m===k)}</b></span>`).join("")}</span></div><div class="g"><span class="gl">Uso de IA (fluxo principal)</span><span class="gv">${[0,1,2].map(i=>`<span><span class="ia i${i}">${IA[i]}</span> <b>${cnt(main,p=>p.ia===i)}</b></span>`).join("")}</span></div><div class="g"><span class="gl">Quem executa (fluxo principal)</span><span class="gv">${Object.keys(EX).map(k=>`<span><span class="ex">${EX[k]}</span> <b>${cnt(main,p=>p.ex===k)}</b></span>`).join("")}</span></div><div class="g"><span class="gl">Interface com a Implantação</span><span class="gv">${Object.keys(IMP).map(k=>`<span><span class="imp">${IMP[k]}</span> <b>${cnt(all,p=>p.imp&&p.imp.d===k)}</b></span>`).join("")}<span><span class="chk">Validar</span> <b>${cnt(all,p=>p.chk)}</b></span></span></div>`;
+document.getElementById("summary").innerHTML = `<div class="g"><span class="gl">Fluxo principal</span><span class="gv"><span><b>${main.length}</b> processos em ${TRAILS.length} ${TRAILS.length===1?'trilha':'trilhas'}</span><span><b>${all.length-main.length}</b> de gestão e suporte</span></span></div><div class="g"><span class="gl">Execução (fluxo principal)</span><span class="gv">${["auto","misto","manual"].map(k=>`<span><span class="mode ${k}">${MODE[k]}</span> <b>${cnt(main,p=>p.m===k)}</b></span>`).join("")}</span></div><div class="g"><span class="gl">Uso de IA (fluxo principal)</span><span class="gv">${[0,1,2].map(i=>`<span><span class="ia i${i}">${IA[i]}</span> <b>${cnt(main,p=>p.ia===i)}</b></span>`).join("")}</span></div><div class="g"><span class="gl">Quem executa (fluxo principal)</span><span class="gv">${Object.keys(EX).map(k=>`<span><span class="ex">${EX[k]}</span> <b>${cnt(main,p=>p.ex===k)}</b></span>`).join("")}</span></div><div class="g"><span class="gl">Interfaces</span><span class="gv">${Object.keys(IMP).map(k=>`<span><span class="imp">${IMP[k]}</span> <b>${cnt(all,p=>p.imp&&p.imp.d===k)}</b></span>`).join("")}<span><span class="chk">Validar</span> <b>${cnt(all,p=>p.chk)}</b></span></span></div>`;
 const pop = document.getElementById("pop");
 let cur=null,pinned=false,hideT=null,showT=null;
 const tool = k => { const t=T[k]; return t?.u ? `<a class="tool" href="${t.u}" target="_blank" rel="noopener">${t.n} ↗</a>` : `<span class="tool">${t?.n||k}</span>`; };
 const sec = (l,h,c="") => `<div class="sec ${c}"><span class="sl">${l}</span>${h}</div>`;
-function content(k){const r=REG[k],d=r.d;const head=`<div class="ph"><h3><span class="code">${d.id}</span>${d.t||d.n}</h3><button class="x" type="button" aria-label="Fechar">×</button></div>`;if(r.kind==="mp")return head+sec("Objetivo",`<p>${d.o}</p>`)+sec("Entrega",`<p>${d.e}</p>`)+sec("Valor para a Seazone",`<p>Contribui para: <b>${d.val}</b> (${r.tr.val.join(" → ")}).</p>`)+sec("Como entregar mais valor",`<p>${d.opp}</p><p style="font-size:12px;color:var(--ink3)">Sugestão para validar com a liderança.</p>`,"opp");return head+tags(d)+sec("Responsável",`<p>${d.who}</p>`)+sec("Objetivo",`<p>${d.o}</p>`)+sec("Entrega",`<p>${d.e}</p>`)+sec("Como funciona", d.how.length>1?`<ul>${d.how.map(h=>`<li>${h}</li>`).join("")}</ul>`:`<p>${d.how[0]}</p>`)+(d.aud?sec("Auditoria",`<p>${d.aud}</p>`,"aud"):"")+(d.imp?sec(d.imp.d==="recebe"?"Interface: recebemos da Implantação":"Interface: entregamos para a Implantação",`<p>${d.imp.t}</p>`,"impb"):"")+(d.chk?sec("A validar",`<p>${d.chk}</p>`,"chkb"):"")+(autosOf(d.id).length?sec("Agentes e rotinas",`<ul>${autosOf(d.id).map(a=>`<li><b>${a.id}</b> ${a.n} (${ST[a.st].toLowerCase()})</li>`).join("")}</ul>`):"")+sec("Ferramentas",`<div class="tools">${d.tools.map(tool).join("")}</div>`);}
+function content(k){const r=REG[k],d=r.d;const head=`<div class="ph"><h3><span class="code">${d.id}</span>${d.t||d.n}</h3><button class="x" type="button" aria-label="Fechar">×</button></div>`;if(r.kind==="mp")return head+sec("Objetivo",`<p>${d.o}</p>`)+sec("Entrega",`<p>${d.e}</p>`)+sec("Valor para a Seazone",`<p>Contribui para: <b>${d.val}</b> (${r.tr.val.join(" → ")}).</p>`)+sec("Como entregar mais valor",`<p>${d.opp}</p><p style="font-size:12px;color:var(--ink3)">Sugestão para validar com a liderança.</p>`,"opp");return head+tags(d)+sec("Responsável",`<p>${d.who}</p>`)+sec("Objetivo",`<p>${d.o}</p>`)+sec("Entrega",`<p>${d.e}</p>`)+sec("Como funciona", d.how.length>1?`<ul>${d.how.map(h=>`<li>${h}</li>`).join("")}</ul>`:`<p>${d.how[0]}</p>`)+(d.aud?sec("Auditoria",`<p>${d.aud}</p>`,"aud"):"")+(d.imp?sec(IMPT[d.imp.d],`<p>${d.imp.t}</p>`,"impb"):"")+(d.chk?sec("A validar",`<p>${d.chk}</p>`,"chkb"):"")+(autosOf(d.id).length?sec("Agentes e rotinas",`<ul>${autosOf(d.id).map(a=>`<li><b>${a.id}</b> ${a.n} (${ST[a.st].toLowerCase()})</li>`).join("")}</ul>`):"")+sec("Ferramentas",`<div class="tools">${d.tools.map(tool).join("")}</div>`);}
 function place(el){const b=el.getBoundingClientRect(),pw=pop.offsetWidth,ph=pop.offsetHeight,vw=innerWidth,vh=innerHeight;let x,y=b.top;if(b.right+10+pw<=vw-12)x=b.right+10;else if(b.left-pw-10>=12)x=b.left-pw-10;else{x=Math.max(12,Math.min(b.left,vw-pw-12));y=b.bottom+8;}if(y+ph>vh-12)y=Math.max(12,vh-ph-12);pop.style.left=x+"px";pop.style.top=y+"px";}
 function open(el,pin){clearTimeout(hideT);if(cur&&cur!==el)cur.setAttribute("aria-expanded","false");cur=el;pinned=pin;el.setAttribute("aria-expanded","true");pop.innerHTML=content(el.dataset.k);pop.hidden=false;place(el);pop.querySelector(".x").onclick=close;}
 function close(){pop.hidden=true;pinned=false;if(cur){cur.setAttribute("aria-expanded","false");cur=null;}}
