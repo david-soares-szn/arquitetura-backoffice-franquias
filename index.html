@@ -756,6 +756,10 @@ const T = {
  "sk_rotdash": {
   "n": "Rotina mensal do Dashboard Financeiro (PC da Isa, dia 10)",
   "u": "https://github.com/seazone-tech/franquias-financeiro"
+ },
+ "sk_pautastop": {
+  "n": "Skill pauta-stop-crescimento-adm-fin (Isa)",
+  "u": "https://github.com/seazone-tech/seazone-skills/tree/main/franquias/skills/pauta-stop-crescimento-adm-fin"
  }
 };
 
@@ -2308,7 +2312,8 @@ const TRAILS = [
        "ops_nekt",
        "ops_slack",
        "ops_suporte",
-       "ops_github"
+       "ops_github",
+       "sk_pautastop"
       ]
      }
     ]
@@ -2338,26 +2343,30 @@ const TRAILS = [
       "tools": [
        "ops_appstop",
        "ops_slack",
-       "ops_host"
+       "ops_host",
+       "sk_pautastop"
       ],
       "aud": "BackOffice confere a lista da rodada no mesmo dia e cobra quem não respondeu."
      },
      {
       "id": "15.2",
       "t": "Decidir stops acima de 90 dias",
-      "m": "manual",
-      "ia": 0,
+      "m": "misto",
+      "ia": 1,
       "ex": "pessoa",
       "who": "Gerências de Relacionamento e de BackOffice",
       "o": "Caso parado há três rodadas virar decisão: manter, remover ou reduzir base e distrato.",
       "e": "Decisão registrada no histórico do stop.",
       "how": [
        "A rodada cobra: primeira à gerência dona do assunto (Relacionamento para qualidade, pedido e GOP; BackOffice para tamanho e sem motivo), segunda cruza para a outra, da terceira em diante as duas toda semana.",
-       "Redução de base roda pela migração de franquias, conduzida pelo Relacionamento; o stop permanece enquanto a migração corre."
+       "Redução de base roda pela migração de franquias, conduzida pelo Relacionamento; o stop permanece enquanto a migração corre.",
+       "Na quinta anterior à revisão mensal (sexta, com a Gerência de BackOffice e a Gerência de Relacionamento), a skill pauta-stop-crescimento-adm-fin monta a pauta: stops acima de 90 dias, stops de qualidade contra o Score novo, franquias que receberam imóvel depois do stop, franquias sem stop que não recebem imóvel, stops novos e a régua de manutenção recalculada.",
+       "Só leitura (MCP stop-crescimento, Sapron e ScorePulse): a pauta propõe, a reunião decide e o app aplica."
       ],
       "tools": [
        "ops_appstop",
-       "ops_slack"
+       "ops_slack",
+       "sk_pautastop"
       ]
      },
      {
@@ -4392,6 +4401,18 @@ const AUTOS = [
      "23.3"
     ],
     "chk": "Ainda fora do inventário de automações."
+   },
+   {
+    "id": "S33",
+    "n": "pauta-stop-crescimento-adm-fin",
+    "st": "ar",
+    "f": "Claude Code · mensal, quinta antes da revisão (dona: Isa)",
+    "o": "Monta a pauta da revisão mensal do Stop de Crescimento em HTML, com fonte em cada número; só leitura, nunca aplica nem remove stop.",
+    "s": [
+     "15.2",
+     "15.1",
+     "14.4"
+    ]
    }
   ]
  },
